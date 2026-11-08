@@ -72,8 +72,7 @@ En conformidad con las bases de la Evaluación Parcial N°3, se utilizó intelig
   > "Genera un script bash (`deploy_ec2.sh`) reproducible y robusto para desplegar esta aplicación Django en una instancia EC2 de AWS Academy (Ubuntu 22.04 LTS). Debe instalar automáticamente PostgreSQL, crear la base de datos `buildcorp_db` y el usuario, configurar el entorno virtual, aplicar migraciones, ejecutar `collectstatic`, poblar los datos con `seed_data`, configurar un servicio systemd para Gunicorn y configurar Nginx como proxy inverso en el puerto 80 sirviendo estáticos y media."
 * **Respuesta y Decisión Técnica de la IA:**
   - Creación del script `deploy/deploy_ec2.sh` totalmente automatizado e idempotente.
-  - Creación de archivos de configuración complementarios `deploy/nginx_buildcorp.conf` y `deploy/buildcorp.service`.
-  - Inclusión de `Dockerfile` y `docker-compose.yml` para alternativas de ejecución mediante contenedores.
+  - Creación de archivos de configuración complementarios `deploy/nginx_buildcorp.conf` y `deploy/buildcorp.service` optimizados para la capa gratuita de AWS EC2.
 
 ---
 
