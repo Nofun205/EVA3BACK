@@ -11,15 +11,13 @@
 ## 🌐 Enlace de Despliegue en AWS Cloud (EC2)
 
 > ### **URL Pública de la Aplicación en AWS EC2:**
-> 🔗 **`http://<TU_IP_PUBLICA_EC2>/`**
->
-> *(Reemplace `<TU_IP_PUBLICA_EC2>` con la dirección IP Pública asignada por su instancia de AWS Academy EC2. Ejemplo: `http://54.210.120.45/`)*
+> 🔗 **`http://98.89.32.199/`**
 >
 > **Panel Django Admin:**
-> 🔗 **`http://<TU_IP_PUBLICA_EC2>/admin/`**
+> 🔗 **`http://98.89.32.199/admin/`**
 >
 > **API REST Navegable (DRF):**
-> 🔗 **`http://<TU_IP_PUBLICA_EC2>/api/`**
+> 🔗 **`http://98.89.32.199/api/`**
 
 ### 🔑 Credenciales de Acceso para Evaluación y Defensa:
 * **Superusuario / Administrador:**
