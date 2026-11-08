@@ -41,6 +41,7 @@ urlpatterns = [
     path('alquileres/<int:pk>/', views.alquiler_detail, name='alquiler_detail'),
     path('alquileres/<int:pk>/entrega/', views.alquiler_entrega, name='alquiler_entrega'),
     path('alquileres/<int:pk>/devolucion/', views.alquiler_devolucion, name='alquiler_devolucion'),
+    path('alquileres/<int:pk>/comprobante/', views.alquiler_comprobante, name='alquiler_comprobante'),
 
     # Mantenimientos Preventivos y Correctivos
     path('mantenimientos/', views.mantenimientos_list, name='mantenimientos_list'),
@@ -55,3 +56,4 @@ urlpatterns = [
     # Endpoints de API REST (DRF)
     path('api/', include(router.urls)),
 ]
+

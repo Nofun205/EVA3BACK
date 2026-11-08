@@ -183,3 +183,4 @@ class MantenimientoForm(forms.ModelForm):
             'descripcion_trabajo': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'repuestos_utilizados': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
         }
+

@@ -218,3 +218,4 @@ Durante la evaluación práctica en vivo con el docente **Marcelo Alvarado Arave
 ### 6. Demostración en Django Admin:
 * Acceda a `http://<TU_IP_PUBLICA_EC2>/admin/`.
 * Muestre la personalización visual con badges de colores para cada estado (`DISPONIBLE`, `EN_USO`, `MANTENIMIENTO`, `BLOQUEADO`), los filtros laterales, búsquedas y las acciones masivas personalizadas (`@admin.action`).
+

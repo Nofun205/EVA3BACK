@@ -80,3 +80,4 @@ En conformidad con las bases de la Evaluación Parcial N°3, se utilizó intelig
 ## 3. Conclusión y Valor Agregado del Apoyo de IA
 
 El uso guiado de herramientas de Inteligencia Artificial permitió acelerar los procesos mecánicos de maquetación HTML/CSS y configuración de servidores, permitiendo centrar el 100% del esfuerzo en la integridad relacional de la base de datos PostgreSQL, la seguridad en el manejo de sesiones y el cumplimiento exhaustivo de las 4 reglas clave de negocio exigidas en la rúbrica de evaluación.
+

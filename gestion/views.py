@@ -682,3 +682,18 @@ def ejecutar_verificacion_morosidad_view(request):
             messages.success(request, "No se detectaron nuevas morosidades. Todos los contratos activos están al día.")
 
     return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
+
+
+@login_required
+def alquiler_comprobante(request, pk):
+    """Genera el acta oficial de entrega y recepción imprimible con firmas digitales."""
+    alquiler = get_object_or_404(
+        AlquilerPrestamo.objects.select_related('contratista', 'obra', 'entrega', 'devolucion'),
+        pk=pk
+    )
+    detalles = alquiler.detalles.select_related('herramienta')
+    return render(request, 'gestion/alquiler_comprobante.html', {
+        'alquiler': alquiler,
+        'detalles': detalles
+    })
+

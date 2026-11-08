@@ -11,9 +11,17 @@ echo "============================================================"
 echo "    INICIANDO DESPLIEGUE DE BUILDCORP EN AWS EC2            "
 echo "============================================================"
 
-# 1. Actualización de paquetes del sistema
-echo "==> [1/7] Actualizando repositorios y paquetes del sistema..."
+# 1. Actualización de paquetes del sistema y configuración de memoria Swap (Recomendado para EC2 t2.micro)
+echo "==> [1/7] Actualizando repositorios y configurando memoria swap..."
 sudo apt update && sudo apt upgrade -y
+
+if [ ! -f /swapfile ]; then
+    sudo fallocate -l 1G /swapfile || sudo dd if=/dev/zero of=/swapfile bs=1M count=1024
+    sudo chmod 600 /swapfile
+    sudo mkswap /swapfile
+    sudo swapon /swapfile
+    echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+fi
 
 # 2. Instalación de dependencias (Python, PostgreSQL, Nginx, Git, Libpq)
 echo "==> [2/7] Instalando Python 3, PostgreSQL, Nginx y dependencias..."
@@ -108,3 +116,4 @@ echo "Panel Django Admin en:"
 echo "http://${PUBLIC_IP}/admin/"
 echo "Credenciales: admin / Admin123!"
 echo "============================================================"
+

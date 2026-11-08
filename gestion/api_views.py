@@ -332,3 +332,4 @@ class AlertaMorosidadViewSet(viewsets.ReadOnlyModelViewSet):
             'mensaje': f'Alerta resuelta. El contratista {alerta.contratista.razon_social} ha sido evaluado para desbloqueo.',
             'alerta': self.get_serializer(alerta).data
         })
+

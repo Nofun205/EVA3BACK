@@ -253,3 +253,4 @@ class AlertaMorosidadSerializer(serializers.ModelSerializer):
             'fecha_resolucion',
             'motivo_resolucion'
         ]
+

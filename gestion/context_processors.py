@@ -24,3 +24,4 @@ def alertas_globales(request):
     except Exception:
         # En caso de migraciones pendientes o base no lista
         return {}
+
