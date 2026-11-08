@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block title %}Alquiler {{ alquiler.codigo }} | BuildCorp{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <a href="{% url 'alquileres_list' %}" class="btn btn-sm btn-outline-secondary mb-2">
+            <i class="fa-solid fa-arrow-left me-1"></i> Volver a Alquileres
+        </a>
+        <h2 class="fw-bold mb-0">
+            Contrato de Alquiler: {{ alquiler.codigo }}
+            {% if alquiler.estado == 'DEVUELTO' %}
+                <span class="badge badge-disponible fs-6 align-middle ms-2">Devuelto / Finalizado</span>
+            {% elif alquiler.estado == 'ACTIVO' %}
+                <span class="badge badge-en-uso fs-6 align-middle ms-2">Activo en Faena</span>
+            {% elif alquiler.estado == 'VENCIDO' %}
+                <span class="badge badge-baja fs-6 align-middle ms-2">Vencido en Mora</span>
+            {% else %}
+                <span class="badge bg-secondary fs-6 align-middle ms-2">{{ alquiler.get_estado_display }}</span>
+            {% endif %}
+        </h2>
+        <span class="text-muted">
+            Contratista: <strong>{{ alquiler.contratista.razon_social }}</strong> (RUT: {{ alquiler.contratista.rut_empresa }}) |
+            Obra: <strong>{{ alquiler.obra.nombre }}</strong>
+        </span>
+    </div>
+    <div class="d-flex gap-2">
+        {% if alquiler.estado == 'SOLICITADO' and not alquiler.entrega %}
+        <a href="{% url 'alquiler_entrega' alquiler.pk %}" class="btn btn-warning fw-bold shadow-sm">
+            <i class="fa-solid fa-pen-nib me-1"></i> Despachar y Firmar Entrega
+        </a>
+        {% elif alquiler.estado == 'ACTIVO' or alquiler.estado == 'VENCIDO' %}
+        <a href="{% url 'alquiler_devolucion' alquiler.pk %}" class="btn btn-success fw-bold shadow-sm">
+            <i class="fa-solid fa-rotate-left me-1"></i> Recibir y Firmar Devolución
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Banner de Alerta si está Vencido -->
+{% if alquiler.estado == 'VENCIDO' or alquiler.dias_retraso > 0 %}
+<div class="alert alert-danger border-danger shadow-sm mb-4">
+    <div class="d-flex align-items-center">
+        <i class="fa-solid fa-triangle-exclamation fa-2x me-3"></i>
+        <div>
+            <h5 class="alert-heading fw-bold mb-1">Contrato en Estado de Morosidad</h5>
+            <span>
+                Este contrato presenta <strong>{{ alquiler.dias_retraso }} días de atraso</strong> respecto a la fecha pactada ({{ alquiler.fecha_fin_estimada|date:"d/m/Y" }}).
+                Se ha generado un recargo de morosidad por <strong>${{ alquiler.recargo_mora|floatformat:0 }} CLP</strong> y el contratista ha sido <strong>bloqueado preventivamente</strong>.
+            </span>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row g-4 mb-4">
+    <!-- Resumen Financiero y Fechas -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="fw-bold mb-0 text-secondary"><i class="fa-solid fa-file-invoice-dollar me-2 text-warning"></i>Liquidación del Arriendo</h5>
+            </div>
+            <div class="card-body p-4">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Fecha Inicio:</span>
+                        <span class="fw-semibold">{{ alquiler.fecha_inicio|date:"d/m/Y" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Fecha Pactada de Devolución:</span>
+                        <span class="fw-bold {% if alquiler.estado == 'VENCIDO' %}text-danger{% endif %}">
+                            {{ alquiler.fecha_fin_estimada|date:"d/m/Y" }}
+                        </span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Fecha Devolución Real:</span>
+                        <span class="fw-semibold">{{ alquiler.fecha_devolucion_real|date:"d/m/Y"|default:"Pendiente" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Días Pactados:</span>
+                        <span>{{ alquiler.dias_duracion_pactada }} días</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Costo Proyectado:</span>
+                        <span class="fw-bold">${{ alquiler.costo_estimado|floatformat:0 }} CLP</span>
+                    </li>
+                    {% if alquiler.recargo_mora > 0 %}
+                    <li class="list-group-item d-flex justify-content-between px-0 text-danger">
+                        <span class="fw-bold">Multa por Morosidad ({{ alquiler.dias_retraso }} días):</span>
+                        <span class="fw-bold">+${{ alquiler.recargo_mora|floatformat:0 }} CLP</span>
+                    </li>
+                    {% endif %}
+                    <li class="list-group-item d-flex justify-content-between px-0 border-top pt-3">
+                        <span class="fs-5 fw-bold text-dark">Total Liquidación:</span>
+                        <span class="fs-5 fw-bold text-success">
+                            {% if alquiler.costo_final > 0 %}
+                                ${{ alquiler.costo_final|floatformat:0 }} CLP
+                            {% else %}
+                                ${{ alquiler.costo_estimado|floatformat:0 }} CLP (Est.)
+                            {% endif %}
+                        </span>
+                    </li>
+                </ul>
+
+                {% if alquiler.observaciones %}
+                <div class="mt-3">
+                    <label class="form-label text-muted small fw-bold">Observaciones / Términos:</label>
+                    <p class="small bg-light p-2 rounded border mb-0">{{ alquiler.observaciones }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Información de Obra y Contacto -->
+        <div class="card border-0 shadow-sm rounded-3">
+            <div class="card-header bg-white py-3">
+                <h5 class="fw-bold mb-0 text-secondary"><i class="fa-solid fa-location-dot me-2 text-warning"></i>Datos de Faena</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="fw-bold fs-6">{{ alquiler.obra.nombre }}</div>
+                <div class="text-muted small mb-2">{{ alquiler.obra.direccion }}, {{ alquiler.obra.comuna_ciudad }}</div>
+                <hr class="my-2">
+                <div class="small">
+                    <strong>Responsable en Terreno:</strong> {{ alquiler.obra.encargado_obra }}<br>
+                    <strong>Teléfono:</strong> {{ alquiler.obra.telefono_encargado|default:"No informado" }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Herramientas Incluidas y Comprobantes con Firma Digital -->
+    <div class="col-lg-8">
+        <!-- Tabla de Herramientas del Detalle -->
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="fw-bold mb-0 text-secondary"><i class="fa-solid fa-boxes-stacked me-2 text-warning"></i>Herramientas Incluidas en este Arriendo ({{ detalles.count }})</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Código</th>
+                            <th>Herramienta</th>
+                            <th>Tarifa Pactada</th>
+                            <th>Horómetro Salida</th>
+                            <th>Horómetro Llegada</th>
+                            <th>Estado Regreso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in detalles %}
+                        <tr>
+                            <td class="fw-bold">
+                                <a href="{% url 'herramienta_detail' d.herramienta.pk %}" class="text-decoration-none">
+                                    {{ d.herramienta.codigo }}
+                                </a>
+                            </td>
+                            <td>
+                                <div class="fw-semibold">{{ d.herramienta.nombre }}</div>
+                                <small class="text-muted">{{ d.herramienta.marca }} {{ d.herramienta.modelo }}</small>
+                            </td>
+                            <td class="fw-semibold">${{ d.tarifa_diaria_pactada|floatformat:0 }}/día</td>
+                            <td>{{ d.horas_iniciales }} h</td>
+                            <td>{{ d.horas_finales|default:"En faena" }} {% if d.horas_finales %}h{% endif %}</td>
+                            <td>
+                                {% if d.estado_herramienta_devolucion %}
+                                    <span class="badge bg-light text-dark border">{{ d.estado_herramienta_devolucion }}</span>
+                                {% else %}
+                                    <span class="text-muted small">Pendiente devolución</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tarjetas de Firmas Digitales (Entrega y Devolución) -->
+        <div class="row g-3">
+            <!-- Comprobante de Entrega con Firma -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm rounded-3 h-100">
+                    <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold mb-0 text-secondary"><i class="fa-solid fa-signature me-1 text-primary"></i>Firma Digital de Entrega</h6>
+                        {% if alquiler.entrega %}
+                            <span class="badge bg-success">Registrada</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Pendiente</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body p-3">
+                        {% if alquiler.entrega %}
+                            <div class="small mb-2">
+                                <strong>Receptor en Obra:</strong> {{ alquiler.entrega.responsable_obra_nombre }}<br>
+                                <strong>RUT:</strong> {{ alquiler.entrega.responsable_obra_rut }}<br>
+                                <strong>Despachador:</strong> {{ alquiler.entrega.despachador_bodega.username|default:"Bodeguero" }}<br>
+                                <strong>Fecha/Hora:</strong> {{ alquiler.entrega.fecha_hora_entrega|date:"d/m/Y H:i" }}
+                            </div>
+                            {% if alquiler.entrega.firma_digital %}
+                            <div class="text-center p-2 bg-white border rounded shadow-sm">
+                                <img src="{{ alquiler.entrega.firma_digital.url }}" alt="Firma Entrega" class="img-fluid" style="max-height: 120px;">
+                                <div class="text-muted small mt-1">Firma Digital Capturada en Canvas</div>
+                            </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-center py-4 text-muted small">
+                                <i class="fa-solid fa-file-signature fa-2x mb-2 d-block"></i>
+                                Entrega no despachada todavía.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comprobante de Devolución con Firma -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm rounded-3 h-100">
+                    <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold mb-0 text-secondary"><i class="fa-solid fa-signature me-1 text-success"></i>Firma Digital de Devolución</h6>
+                        {% if alquiler.devolucion %}
+                            <span class="badge bg-success">Registrada</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Pendiente</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body p-3">
+                        {% if alquiler.devolucion %}
+                            <div class="small mb-2">
+                                <strong>Responsable que Entrega:</strong> {{ alquiler.devolucion.responsable_obra_nombre }}<br>
+                                <strong>RUT:</strong> {{ alquiler.devolucion.responsable_obra_rut }}<br>
+                                <strong>Receptor Bodega:</strong> {{ alquiler.devolucion.receptor_bodega.username|default:"Bodeguero" }}<br>
+                                <strong>Fecha/Hora:</strong> {{ alquiler.devolucion.fecha_hora_devolucion|date:"d/m/Y H:i" }}<br>
+                                <strong>Estado General:</strong> {{ alquiler.devolucion.estado_general_equipos }}
+                            </div>
+                            {% if alquiler.devolucion.firma_digital %}
+                            <div class="text-center p-2 bg-white border rounded shadow-sm">
+                                <img src="{{ alquiler.devolucion.firma_digital.url }}" alt="Firma Devolución" class="img-fluid" style="max-height: 120px;">
+                                <div class="text-muted small mt-1">Firma Digital de Conformidad</div>
+                            </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-center py-4 text-muted small">
+                                <i class="fa-solid fa-clock-rotate-left fa-2x mb-2 d-block"></i>
+                                Devolución pendiente por parte del contratista.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

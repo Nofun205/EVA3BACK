@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Alertas de Morosidad y Bloqueos | BuildCorp{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2 class="fw-bold mb-1"><i class="fa-solid fa-bell text-warning me-2"></i>Sistema de Alertas de Morosidad</h2>
+        <p class="text-muted mb-0">Control de vencimientos en contratos de arriendo y bloqueo automático de subcontratistas morosos.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <form action="{% url 'verificar_morosidad_global' %}" method="post" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger fw-bold shadow-sm">
+                <i class="fa-solid fa-bolt-lightning me-1"></i> Ejecutar Verificación Global de Vencimientos
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Filtros de Alertas -->
+<div class="card border-0 shadow-sm rounded-3 mb-4">
+    <div class="card-body p-3">
+        <div class="d-flex gap-2">
+            <a href="{% url 'alertas_list' %}?resuelta=false" class="btn btn-sm {% if filtro_resuelta == 'false' or filtro_resuelta is None %}btn-danger{% else %}btn-outline-danger{% endif %} fw-semibold">
+                <i class="fa-solid fa-triangle-exclamation me-1"></i> Alertas Pendientes (Activas)
+            </a>
+            <a href="{% url 'alertas_list' %}?resuelta=true" class="btn btn-sm {% if filtro_resuelta == 'true' %}btn-success{% else %}btn-outline-success{% endif %} fw-semibold">
+                <i class="fa-solid fa-circle-check me-1"></i> Alertas Resueltas / Regularizadas
+            </a>
+            <a href="{% url 'alertas_list' %}" class="btn btn-sm btn-outline-secondary">
+                Ver Todas
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Listado de Alertas -->
+<div class="card border-0 shadow-sm rounded-3">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Fecha Detección</th>
+                    <th>Contrato Alquiler</th>
+                    <th>Contratista Moroso</th>
+                    <th>Días Vencido</th>
+                    <th>Multa Acumulada</th>
+                    <th>Sanción Aplicada</th>
+                    <th>Estado</th>
+                    <th class="text-end">Operación</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in alertas %}
+                <tr>
+                    <td class="small text-muted">{{ a.fecha_deteccion|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <a href="{% url 'alquiler_detail' a.alquiler.pk %}" class="fw-bold text-decoration-none">
+                            {{ a.alquiler.codigo }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'contratista_detail' a.contratista.pk %}" class="fw-semibold text-dark text-decoration-none">
+                            {{ a.contratista.razon_social }}
+                        </a>
+                    </td>
+                    <td>
+                        <span class="badge bg-danger">{{ a.dias_vencido }} días</span>
+                    </td>
+                    <td class="fw-bold text-danger">
+                        ${{ a.monto_multa_calculada|floatformat:0 }} CLP
+                    </td>
+                    <td>
+                        {% if a.bloqueo_aplicado %}
+                            <span class="badge bg-dark"><i class="fa-solid fa-ban me-1 text-danger"></i>Contratista Bloqueado</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Sin Bloqueo</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if a.resuelta %}
+                            <span class="badge badge-disponible">Resuelta</span>
+                        {% else %}
+                            <span class="badge badge-baja">Pendiente</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        {% if not a.resuelta %}
+                        <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalResolver{{ a.pk }}">
+                            <i class="fa-solid fa-check me-1"></i> Regularizar
+                        </button>
+
+                        <!-- Modal para Resolver Alerta -->
+                        <div class="modal fade text-start" id="modalResolver{{ a.pk }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form action="{% url 'alerta_resolver' a.pk %}" method="post">
+                                        {% csrf_token %}
+                                        <div class="modal-header bg-dark text-white">
+                                            <h5 class="modal-title">Regularizar Alerta de Morosidad</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p class="small text-muted">
+                                                Al regularizar, se registrará el pago o devolución formal y se desbloqueará al contratista <strong>{{ a.contratista.razon_social }}</strong> si no tiene otras deudas pendientes.
+                                            </p>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Motivo de la Regularización *</label>
+                                                <textarea name="motivo_resolucion" class="form-control" rows="3" required placeholder="Ej: Pago de multa comprobante #12345 y devolución conforme de herramientas..."></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-success fw-semibold">Resolver y Desbloquear</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <small class="text-muted"><i class="fa-solid fa-check-double text-success"></i> {{ a.fecha_resolucion|date:"d/m/Y" }}</small>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-shield-check fa-3x mb-3 d-block text-success opacity-50"></i>
+                        No se registran alertas de morosidad con los filtros seleccionados.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

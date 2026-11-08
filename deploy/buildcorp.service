@@ -1,0 +1,21 @@
+[Unit]
+Description=BuildCorp Django Gunicorn Application Server
+After=network.target postgresql.service
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/EVA3BACK
+EnvironmentFile=/home/ubuntu/EVA3BACK/.env
+ExecStart=/home/ubuntu/EVA3BACK/venv/bin/gunicorn \
+    --workers 3 \
+    --bind 127.0.0.1:8000 \
+    --access-logfile - \
+    --error-logfile - \
+    buildcorp.wsgi:application
+
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

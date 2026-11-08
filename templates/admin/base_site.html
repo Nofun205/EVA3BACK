@@ -1,0 +1,46 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | BuildCorp Admin{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+    <a href="{% url 'admin:index' %}" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit;">
+        <span style="font-size: 24px;">🏗️</span>
+        <div>
+            <span style="font-size: 18px; font-weight: 800; letter-spacing: 0.5px; color: #ffc107;">BUILDCORP</span>
+            <span style="font-size: 13px; opacity: 0.85; font-weight: 400; display: block;">Sistema de Alquiler y Control de Herramientas</span>
+        </div>
+    </a>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    :root {
+        --primary: #1e293b;
+        --secondary: #0f172a;
+        --accent: #ffc107;
+    }
+    #header {
+        background: #0f172a !important;
+        color: #f8fafc !important;
+        border-bottom: 3px solid #ffc107;
+    }
+    .module h2, .module caption, .inline-group h2 {
+        background: #1e293b !important;
+        color: #f8fafc !important;
+    }
+    div.breadcrumbs {
+        background: #1e293b !important;
+    }
+    .button, input[type=submit], input[type=button], .submit-row input, a.button {
+        background: #0d6efd !important;
+        border-radius: 6px;
+    }
+    .button.default, input[type=submit].default, .submit-row input.default {
+        background: #198754 !important;
+    }
+</style>
+{% endblock %}

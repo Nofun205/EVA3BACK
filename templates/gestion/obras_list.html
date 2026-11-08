@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Obras y Faenas | BuildCorp{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2 class="fw-bold mb-1"><i class="fa-solid fa-building text-warning me-2"></i>Obras y Faenas</h2>
+        <p class="text-muted mb-0">Ubicaciones activas donde operan las maquinarias y herramientas arrendadas.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'contratistas_list' %}" class="btn btn-outline-secondary">
+            <i class="fa-solid fa-arrow-left me-1"></i> Contratistas
+        </a>
+        <a href="{% url 'obra_create' %}" class="btn btn-warning fw-bold shadow-sm">
+            <i class="fa-solid fa-plus-circle me-1"></i> Nueva Obra
+        </a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre de la Obra</th>
+                    <th>Contratista Asignado</th>
+                    <th>Dirección / Comuna</th>
+                    <th>Responsable en Terreno</th>
+                    <th>Teléfono</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in obras %}
+                <tr>
+                    <td class="fw-bold">{{ o.codigo }}</td>
+                    <td class="fw-semibold text-dark">{{ o.nombre }}</td>
+                    <td>
+                        <a href="{% url 'contratista_detail' o.contratista.pk %}" class="text-decoration-none">
+                            {{ o.contratista.razon_social }}
+                        </a>
+                    </td>
+                    <td>{{ o.direccion }}, {{ o.comuna_ciudad }}</td>
+                    <td><i class="fa-solid fa-user-gear small me-1 text-muted"></i>{{ o.encargado_obra }}</td>
+                    <td>{{ o.telefono_encargado|default:"-" }}</td>
+                    <td>
+                        {% if o.activa %}
+                            <span class="badge bg-success">Activa</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Inactiva</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-5 text-muted">No se registran obras en el sistema.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

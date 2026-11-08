@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Contrato de Alquiler | BuildCorp{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-dark text-white py-3 border-bottom border-warning border-3 rounded-top-4">
+                <h4 class="fw-bold mb-0"><i class="fa-solid fa-file-contract text-warning me-2"></i>Registrar Nuevo Contrato de Alquiler</h4>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger shadow-sm">
+                        <i class="fa-solid fa-triangle-exclamation me-2"></i>{{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Código del Contrato *</label>
+                            {{ form.codigo }}
+                            {% if form.codigo.errors %}<div class="text-danger small">{{ form.codigo.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Contratista Solicitante *</label>
+                            {{ form.contratista }}
+                            {% if form.contratista.errors %}
+                            <div class="text-danger small fw-bold mt-1">
+                                <i class="fa-solid fa-ban me-1"></i>{{ form.contratista.errors }}
+                            </div>
+                            {% endif %}
+                            <small class="text-muted d-block mt-1">Si el contratista está bloqueado por mora, el sistema rechazará la solicitud.</small>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Obra / Faena Destino *</label>
+                            {{ form.obra }}
+                            {% if form.obra.errors %}<div class="text-danger small">{{ form.obra.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Fecha de Inicio *</label>
+                            {{ form.fecha_inicio }}
+                            {% if form.fecha_inicio.errors %}<div class="text-danger small">{{ form.fecha_inicio.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Fecha Pactada de Devolución *</label>
+                            {{ form.fecha_fin_estimada }}
+                            {% if form.fecha_fin_estimada.errors %}<div class="text-danger small">{{ form.fecha_fin_estimada.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-12 border-top pt-3">
+                            <label class="form-label fw-bold text-dark fs-6">
+                                <i class="fa-solid fa-toolbox text-warning me-2"></i>Selección de Herramientas Disponibles *
+                            </label>
+                            <p class="text-muted small mb-2">Mantenga presionada la tecla Ctrl (o Cmd en Mac) para seleccionar múltiples herramientas.</p>
+                            {{ form.herramientas }}
+                            {% if form.herramientas.errors %}<div class="text-danger small">{{ form.herramientas.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Observaciones / Términos Contractuales</label>
+                            {{ form.observaciones }}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                        <a href="{% url 'alquileres_list' %}" class="btn btn-light border px-4">Cancelar</a>
+                        <button type="submit" class="btn btn-warning fw-bold px-4 shadow-sm">
+                            <i class="fa-solid fa-check me-1"></i> Crear y Liquidar Alquiler
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

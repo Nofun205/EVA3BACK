@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: buildcorp_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: buildcorp_db
+      POSTGRES_USER: buildcorp_user
+      POSTGRES_PASSWORD: buildcorp_pass_2026
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    container_name: buildcorp_web
+    restart: always
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py seed_data &&
+             gunicorn --workers 3 --bind 0.0.0.0:8000 buildcorp.wsgi:application"
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    ports:
+      - "80:8000"
+    environment:
+      - DEBUG=True
+      - SECRET_KEY=django-insecure-buildcorp-secret-key-evaluacion-3-inacap-2026
+      - ALLOWED_HOSTS=*
+      - DATABASE_URL=postgresql://buildcorp_user:buildcorp_pass_2026@db:5432/buildcorp_db
+      - USE_SQLITE_FALLBACK=False
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:

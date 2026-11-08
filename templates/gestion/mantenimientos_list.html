@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Mantenimientos Preventivos y Correctivos | BuildCorp{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2 class="fw-bold mb-1"><i class="fa-solid fa-screwdriver-wrench text-warning me-2"></i>Mantenimiento de Herramientas</h2>
+        <p class="text-muted mb-0">Programación preventiva basada en horómetro de uso acumulado y fechas de calibración.</p>
+    </div>
+    <a href="{% url 'mantenimiento_create' %}" class="btn btn-warning fw-bold shadow-sm">
+        <i class="fa-solid fa-plus-circle me-1"></i> Programar Mantenimiento
+    </a>
+</div>
+
+<!-- Alerta de Herramientas que Superaron el Umbral de Uso -->
+{% if herramientas_en_alerta %}
+<div class="card border-warning mb-4 shadow-sm">
+    <div class="card-header bg-warning text-dark fw-bold d-flex justify-content-between align-items-center py-2">
+        <span><i class="fa-solid fa-triangle-exclamation me-2"></i>Herramientas con Mantenimiento Preventivo Requerido ({{ herramientas_en_alerta|length }})</span>
+        <span class="small">Superaron horómetro de trabajo o fecha límite</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Código</th>
+                    <th>Herramienta</th>
+                    <th>Horas Acumuladas</th>
+                    <th>Umbral Preventivo</th>
+                    <th>Próxima Mantención</th>
+                    <th>Estado Actual</th>
+                    <th class="text-end">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tool in herramientas_en_alerta %}
+                <tr>
+                    <td><strong>{{ tool.codigo }}</strong></td>
+                    <td>{{ tool.nombre }} ({{ tool.marca }})</td>
+                    <td class="text-danger fw-bold">{{ tool.horas_uso_acumuladas }} h</td>
+                    <td>{{ tool.umbral_horas_mantenimiento }} h</td>
+                    <td>{{ tool.fecha_proximo_mantenimiento|date:"d/m/Y"|default:"Vencida" }}</td>
+                    <td>
+                        {% if tool.estado == 'MANTENIMIENTO' %}
+                            <span class="badge badge-mantenimiento">En Taller</span>
+                        {% else %}
+                            <span class="badge bg-danger">Alerta Activa</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'mantenimiento_create' %}?herramienta_id={{ tool.id }}" class="btn btn-sm btn-warning fw-semibold">
+                            <i class="fa-solid fa-wrench me-1"></i> Programar Ahora
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- Filtros de Mantenimiento -->
+<div class="card border-0 shadow-sm rounded-3 mb-4">
+    <div class="card-body p-3">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-5">
+                <select name="estado" class="form-select">
+                    <option value="">-- Todos los Estados --</option>
+                    <option value="PROGRAMADO" {% if estado_filtro == 'PROGRAMADO' %}selected{% endif %}>Programado</option>
+                    <option value="EN_PROCESO" {% if estado_filtro == 'EN_PROCESO' %}selected{% endif %}>En Proceso</option>
+                    <option value="COMPLETADO" {% if estado_filtro == 'COMPLETADO' %}selected{% endif %}>Completado</option>
+                </select>
+            </div>
+            <div class="col-md-5">
+                <select name="tipo" class="form-select">
+                    <option value="">-- Todos los Tipos --</option>
+                    <option value="PREVENTIVO" {% if tipo_filtro == 'PREVENTIVO' %}selected{% endif %}>Preventivo (Horómetro / Fecha)</option>
+                    <option value="CORRECTIVO" {% if tipo_filtro == 'CORRECTIVO' %}selected{% endif %}>Correctivo (Falla)</option>
+                    <option value="CALIBRACION" {% if tipo_filtro == 'CALIBRACION' %}selected{% endif %}>Calibración / Certificación</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100 fw-semibold"><i class="fa-solid fa-filter me-1"></i> Filtrar</button>
+                <a href="{% url 'mantenimientos_list' %}" class="btn btn-light border"><i class="fa-solid fa-rotate-left"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Listado de Mantenimientos -->
+<div class="card border-0 shadow-sm rounded-3">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Herramienta</th>
+                    <th>Tipo</th>
+                    <th>Fecha Programada</th>
+                    <th>Fecha Ejecución</th>
+                    <th>Taller / Técnico</th>
+                    <th>Costo</th>
+                    <th>Estado</th>
+                    <th class="text-end">Operación</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in mantenimientos %}
+                <tr>
+                    <td>
+                        <a href="{% url 'herramienta_detail' m.herramienta.pk %}" class="fw-bold text-decoration-none">
+                            {{ m.herramienta.codigo }}
+                        </a>
+                        <div class="small text-muted">{{ m.herramienta.nombre }}</div>
+                    </td>
+                    <td><span class="badge bg-light text-dark border">{{ m.get_tipo_display }}</span></td>
+                    <td>{{ m.fecha_programada|date:"d/m/Y" }}</td>
+                    <td>{{ m.fecha_ejecucion|date:"d/m/Y"|default:"-" }}</td>
+                    <td><i class="fa-solid fa-user-gear small me-1 text-muted"></i>{{ m.tecnico_responsable }}</td>
+                    <td class="fw-semibold">${{ m.costo|floatformat:0 }} CLP</td>
+                    <td>
+                        {% if m.estado == 'COMPLETADO' %}
+                            <span class="badge badge-disponible">Completado</span>
+                        {% elif m.estado == 'PROGRAMADO' %}
+                            <span class="badge badge-mantenimiento">Programado</span>
+                        {% else %}
+                            <span class="badge bg-info text-white">{{ m.get_estado_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        {% if m.estado != 'COMPLETADO' %}
+                        <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modalCompletar{{ m.pk }}">
+                            <i class="fa-solid fa-check me-1"></i> Finalizar
+                        </button>
+
+                        <!-- Modal para Completar Mantenimiento -->
+                        <div class="modal fade text-start" id="modalCompletar{{ m.pk }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form action="{% url 'mantenimiento_completar' m.pk %}" method="post">
+                                        {% csrf_token %}
+                                        <div class="modal-header bg-dark text-white">
+                                            <h5 class="modal-title">Finalizar Mantenimiento #{{ m.pk }}</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p class="small text-muted mb-3">
+                                                Al finalizar, la herramienta <strong>{{ m.herramienta.codigo }}</strong> volverá a estar <strong>DISPONIBLE</strong> y se reprogramará su próximo ciclo preventivo.
+                                            </p>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Costo Total del Servicio ($CLP) *</label>
+                                                <input type="number" name="costo" class="form-control" value="{{ m.costo|floatformat:0 }}" required min="0">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Repuestos e Insumos Utilizados</label>
+                                                <textarea name="repuestos" class="form-control" rows="3" placeholder="Filtros cambiados, bujías, aceite sintético..."></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-success fw-semibold">Completar y Liberar Herramienta</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <span class="text-muted small"><i class="fa-solid fa-circle-check text-success"></i> Listo</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center py-5 text-muted">No se registran mantenimientos con los filtros seleccionados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

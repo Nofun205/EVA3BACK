@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle {{ herramienta.codigo }} | BuildCorp{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <a href="{% url 'herramientas_list' %}" class="btn btn-sm btn-outline-secondary mb-2">
+            <i class="fa-solid fa-arrow-left me-1"></i> Volver al Catálogo
+        </a>
+        <h2 class="fw-bold mb-0">
+            [{{ herramienta.codigo }}] {{ herramienta.nombre }}
+            {% if herramienta.estado == 'DISPONIBLE' %}
+                <span class="badge badge-disponible fs-6 align-middle ms-2">Disponible</span>
+            {% elif herramienta.estado == 'EN_USO' %}
+                <span class="badge badge-en-uso fs-6 align-middle ms-2">En Uso</span>
+            {% elif herramienta.estado == 'MANTENIMIENTO' %}
+                <span class="badge badge-mantenimiento fs-6 align-middle ms-2">En Mantenimiento</span>
+            {% else %}
+                <span class="badge badge-baja fs-6 align-middle ms-2">Dado de Baja</span>
+            {% endif %}
+        </h2>
+    </div>
+    <div class="d-flex gap-2">
+        <!-- Botón para Cambiar Estado Rápido -->
+        <button type="button" class="btn btn-outline-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#modalCambiarEstado">
+            <i class="fa-solid fa-arrows-rotate me-1"></i> Cambiar Estado
+        </button>
+        <a href="{% url 'mantenimiento_create' %}?herramienta_id={{ herramienta.id }}" class="btn btn-warning fw-semibold">
+            <i class="fa-solid fa-wrench me-1"></i> Programar Mantención
+        </a>
+        <a href="{% url 'herramienta_update' herramienta.pk %}" class="btn btn-light border fw-semibold">
+            <i class="fa-solid fa-pen-to-square me-1"></i> Editar
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Columna Izquierda: Ficha Técnica -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="fw-bold mb-0 text-secondary"><i class="fa-solid fa-circle-info me-2 text-warning"></i>Especificaciones Técnicas</h5>
+            </div>
+            <div class="card-body p-4">
+                {% if herramienta.imagen %}
+                <div class="text-center mb-4">
+                    <img src="{{ herramienta.imagen.url }}" alt="{{ herramienta.nombre }}" class="img-fluid rounded border shadow-sm" style="max-height: 200px; object-fit: contain;">
+                </div>
+                {% endif %}
+
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Categoría:</span>
+                        <span class="fw-bold">{{ herramienta.categoria.nombre }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Marca / Modelo:</span>
+                        <span class="fw-bold">{{ herramienta.marca }} {{ herramienta.modelo }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">N° Serie:</span>
+                        <span class="fw-semibold">{{ herramienta.numero_serie|default:"No informado" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Tarifa Diaria:</span>
+                        <span class="fw-bold text-success">${{ herramienta.tarifa_diaria|floatformat:0 }} CLP</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Valor de Reposición:</span>
+                        <span class="fw-semibold">${{ herramienta.valor_reposicion|floatformat:0 }} CLP</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Ubicación Bodega:</span>
+                        <span class="fw-semibold">{{ herramienta.ubicacion_bodega }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Fecha Adquisición:</span>
+                        <span>{{ herramienta.fecha_adquisicion|date:"d/m/Y"|default:"-" }}</span>
+                    </li>
+                </ul>
+
+                {% if herramienta.observaciones %}
+                <div class="mt-3">
+                    <label class="form-label text-muted small fw-bold">Observaciones:</label>
+                    <p class="small bg-light p-2 rounded border mb-0">{{ herramienta.observaciones }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Tarjeta de Horómetro y Mantenimiento Preventivo -->
+        <div class="card border-0 shadow-sm rounded-3">
+            <div class="card-header bg-white py-3">
+                <h5 class="fw-bold mb-0 text-secondary"><i class="fa-solid fa-gauge me-2 text-warning"></i>Control de Uso y Desgaste</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-semibold">Horas Acumuladas:</span>
+                    <span class="fs-4 fw-bold {% if herramienta.requiere_mantenimiento_preventivo %}text-danger{% else %}text-primary{% endif %}">
+                        {{ herramienta.horas_uso_acumuladas }} h
+                    </span>
+                </div>
+                <div class="d-flex justify-content-between small text-muted mb-2">
+                    <span>Umbral Mantenimiento:</span>
+                    <span>{{ herramienta.umbral_horas_mantenimiento }} h</span>
+                </div>
+
+                <!-- Barra de Progreso de Horas -->
+                <div class="progress mb-3" style="height: 10px;">
+                    <div class="progress-bar {% if herramienta.requiere_mantenimiento_preventivo %}bg-danger{% else %}bg-primary{% endif %}"
+                         role="progressbar"
+                         style="width: {% widthratio herramienta.horas_uso_acumuladas herramienta.umbral_horas_mantenimiento 100 %}%;">
+                    </div>
+                </div>
+
+                {% if herramienta.requiere_mantenimiento_preventivo %}
+                <div class="alert alert-danger small p-2 mb-0">
+                    <i class="fa-solid fa-triangle-exclamation me-1"></i>
+                    <strong>Alerta Preventiva:</strong> Esta herramienta superó las horas de servicio o fecha límite recomendada. Se sugiere cambio de filtros y revisión en taller.
+                </div>
+                {% else %}
+                <div class="alert alert-success small p-2 mb-0">
+                    <i class="fa-solid fa-circle-check me-1"></i>
+                    Equipo en condiciones óptimas según su plan de mantenimiento preventivo.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Columna Derecha: Trazabilidad e Historial -->
+    <div class="col-lg-8">
+        <!-- Pestañas de Historial -->
+        <div class="card border-0 shadow-sm rounded-3">
+            <div class="card-header bg-white border-bottom p-0">
+                <ul class="nav nav-tabs card-header-tabs m-0" id="toolTabs" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active px-4 py-3 fw-semibold text-secondary" id="audit-tab" data-bs-toggle="tab" data-bs-target="#auditTabPane" type="button">
+                            <i class="fa-solid fa-route me-2 text-warning"></i>Trazabilidad de Estados (Auditoría)
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link px-4 py-3 fw-semibold text-secondary" id="maint-tab" data-bs-toggle="tab" data-bs-target="#maintTabPane" type="button">
+                            <i class="fa-solid fa-screwdriver-wrench me-2 text-warning"></i>Historial de Mantenimiento
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link px-4 py-3 fw-semibold text-secondary" id="rentals-tab" data-bs-toggle="tab" data-bs-target="#rentalsTabPane" type="button">
+                            <i class="fa-solid fa-file-contract me-2 text-warning"></i>Alquileres en Faena
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card-body p-4">
+                <div class="tab-content" id="toolTabsContent">
+                    <!-- Tab 1: Trazabilidad y Auditoría de Estados -->
+                    <div class="tab-pane fade show active" id="auditTabPane">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Fecha y Hora</th>
+                                        <th>Transición</th>
+                                        <th>Usuario Responsable</th>
+                                        <th>Motivo / Justificación</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for h in historial %}
+                                    <tr>
+                                        <td class="small text-muted">{{ h.fecha_cambio|date:"d/m/Y H:i" }}</td>
+                                        <td>
+                                            <span class="badge bg-secondary">{{ h.estado_anterior }}</span>
+                                            <i class="fa-solid fa-arrow-right mx-1 text-muted"></i>
+                                            <span class="badge bg-primary">{{ h.estado_nuevo }}</span>
+                                        </td>
+                                        <td><i class="fa-solid fa-user small me-1 text-muted"></i>{{ h.usuario.username|default:"Sistema" }}</td>
+                                        <td><small>{{ h.motivo }}</small></td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4 text-muted">No se registran cambios de estado previos.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Mantenimientos Realizados -->
+                    <div class="tab-pane fade" id="maintTabPane">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th>Fecha Programada</th>
+                                        <th>Técnico</th>
+                                        <th>Costo</th>
+                                        <th>Estado</th>
+                                        <th>Descripción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for m in mantenimientos %}
+                                    <tr>
+                                        <td><span class="badge bg-light text-dark border">{{ m.get_tipo_display }}</span></td>
+                                        <td>{{ m.fecha_programada|date:"d/m/Y" }}</td>
+                                        <td>{{ m.tecnico_responsable }}</td>
+                                        <td class="fw-semibold">${{ m.costo|floatformat:0 }} CLP</td>
+                                        <td>
+                                            {% if m.estado == 'COMPLETADO' %}
+                                                <span class="badge bg-success">Completado</span>
+                                            {% elif m.estado == 'PROGRAMADO' %}
+                                                <span class="badge bg-warning text-dark">Programado</span>
+                                            {% else %}
+                                                <span class="badge bg-info text-white">{{ m.get_estado_display }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td><small>{{ m.descripcion_trabajo }}</small></td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4 text-muted">No se registran mantenimientos para este equipo.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: Alquileres Asociados -->
+                    <div class="tab-pane fade" id="rentalsTabPane">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Alquiler</th>
+                                        <th>Contratista</th>
+                                        <th>Obra</th>
+                                        <th>Horómetro Salida</th>
+                                        <th>Horómetro Regreso</th>
+                                        <th>Estado Físico Regreso</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for d in alquileres_detalles %}
+                                    <tr>
+                                        <td>
+                                            <a href="{% url 'alquiler_detail' d.alquiler.pk %}" class="fw-bold text-decoration-none">
+                                                {{ d.alquiler.codigo }}
+                                            </a>
+                                        </td>
+                                        <td>{{ d.alquiler.contratista.razon_social }}</td>
+                                        <td>{{ d.alquiler.obra.nombre }}</td>
+                                        <td>{{ d.horas_iniciales }} hrs</td>
+                                        <td>{{ d.horas_finales|default:"En uso" }} hrs</td>
+                                        <td>{{ d.estado_herramienta_devolucion|default:"-" }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4 text-muted">Esta herramienta no ha participado en contratos de arriendo aún.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Cambiar Estado Rápido -->
+<div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{% url 'herramienta_cambiar_estado' herramienta.pk %}" method="post">
+                {% csrf_token %}
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title"><i class="fa-solid fa-arrows-rotate text-warning me-2"></i>Cambiar Estado Operativo</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small">
+                        El cambio de estado quedará registrado en la bitácora de auditoría con su usuario y fecha exacta.
+                    </p>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Nuevo Estado:</label>
+                        <select name="nuevo_estado" class="form-select" required>
+                            <option value="DISPONIBLE" {% if herramienta.estado == 'DISPONIBLE' %}selected{% endif %}>Disponible</option>
+                            <option value="EN_USO" {% if herramienta.estado == 'EN_USO' %}selected{% endif %}>En Uso</option>
+                            <option value="MANTENIMIENTO" {% if herramienta.estado == 'MANTENIMIENTO' %}selected{% endif %}>En Mantenimiento</option>
+                            <option value="DADO_DE_BAJA" {% if herramienta.estado == 'DADO_DE_BAJA' %}selected{% endif %}>Dado de Baja</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Motivo / Justificación:</label>
+                        <textarea name="motivo" class="form-control" rows="3" required placeholder="Explique la razón del cambio de estado..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary fw-semibold">Confirmar Cambio de Estado</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

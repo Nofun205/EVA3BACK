@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Iniciar Sesión | BuildCorp{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-header bg-dark text-white text-center py-4 border-bottom border-warning border-3 rounded-top-4">
+                <i class="fa-solid fa-helmet-safety fa-3x text-warning mb-2"></i>
+                <h3 class="fw-bold mb-0">BUILDCORP</h3>
+                <small class="text-secondary text-uppercase letter-spacing-1">Control de Maquinaria y Alquileres</small>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                <h5 class="text-center text-secondary mb-4">Acceso a la Plataforma</h5>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold"><i class="fa-solid fa-user me-1 text-muted"></i> Usuario</label>
+                        <input type="text" name="username" class="form-control form-control-lg" required autofocus placeholder="Nombre de usuario">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold"><i class="fa-solid fa-lock me-1 text-muted"></i> Contraseña</label>
+                        <input type="password" name="password" class="form-control form-control-lg" required placeholder="Contraseña">
+                    </div>
+                    <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold shadow-sm">
+                        <i class="fa-solid fa-right-to-bracket me-2"></i> Ingresar al Sistema
+                    </button>
+                </form>
+
+                <div class="alert alert-light border mt-4 mb-0 small text-muted text-center">
+                    <strong>Credenciales de Demostración:</strong><br>
+                    Usuario: <code>admin</code> | Contraseña: <code>Admin123!</code>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,138 @@
+/* ==========================================================================
+   BUILDCORP - ESTILOS PERSONALIZADOS
+   ========================================================================== */
+
+:root {
+    --bc-primary: #0f172a;       /* Slate 900 */
+    --bc-secondary: #1e293b;     /* Slate 800 */
+    --bc-accent: #f59e0b;        /* Amber 500 (Construcción) */
+    --bc-accent-hover: #d97706;
+    --bc-success: #10b981;
+    --bc-danger: #ef4444;
+    --bc-warning: #f59e0b;
+    --bc-info: #0ea5e9;
+    --bc-bg: #f8fafc;
+    --bc-card-bg: #ffffff;
+}
+
+body {
+    background-color: var(--bc-bg);
+    color: #334155;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar */
+.navbar-buildcorp {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-bottom: 3px solid var(--bc-accent);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand-logo {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #ffffff !important;
+    letter-spacing: 0.5px;
+}
+
+.navbar-brand-logo span {
+    color: var(--bc-accent);
+}
+
+.nav-link {
+    color: #cbd5e1 !important;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--bc-accent) !important;
+}
+
+/* Tarjetas y Paneles */
+.card-kpi {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.card-kpi:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.card-kpi .kpi-icon {
+    font-size: 2.2rem;
+    opacity: 0.85;
+}
+
+.card-kpi .kpi-value {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+/* Badges de Estados */
+.badge-disponible {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.badge-en-uso {
+    background-color: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+}
+
+.badge-mantenimiento {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
+.badge-baja {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+/* Firma Digital Canvas */
+.signature-container {
+    background: #ffffff;
+    border: 2px dashed #94a3b8;
+    border-radius: 10px;
+    padding: 10px;
+    display: inline-block;
+    width: 100%;
+    max-width: 600px;
+}
+
+.signature-pad {
+    width: 100%;
+    height: 220px;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    touch-action: none;
+    cursor: crosshair;
+}
+
+/* Tablas */
+.table-hover tbody tr:hover {
+    background-color: #f1f5f9;
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+    background: #0f172a;
+    color: #94a3b8;
+    padding: 20px 0;
+    border-top: 1px solid #334155;
+}

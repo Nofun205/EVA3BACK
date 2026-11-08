@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }} | BuildCorp{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-dark text-white py-3 border-bottom border-warning border-3 rounded-top-4">
+                <h4 class="fw-bold mb-0"><i class="fa-solid fa-building text-warning me-2"></i>{{ titulo }}</h4>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Código Obra *</label>
+                            {{ form.codigo }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Contratista *</label>
+                            {{ form.contratista }}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Nombre de la Obra *</label>
+                            {{ form.nombre }}
+                        </div>
+
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold">Dirección *</label>
+                            {{ form.direccion }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Comuna / Ciudad *</label>
+                            {{ form.comuna_ciudad }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Responsable en Terreno *</label>
+                            {{ form.encargado_obra }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Teléfono Responsable</label>
+                            {{ form.telefono_encargado }}
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-check form-switch mt-2">
+                                {{ form.activa }}
+                                <label class="form-check-label fw-semibold" for="{{ form.activa.id_for_label }}">Obra Activa</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                        <a href="{% url 'obras_list' %}" class="btn btn-light border px-4">Cancelar</a>
+                        <button type="submit" class="btn btn-warning fw-bold px-4 shadow-sm">
+                            <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Obra
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

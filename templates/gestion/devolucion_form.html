@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Devolución y Firma Digital | {{ alquiler.codigo }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-header bg-dark text-white py-3 border-bottom border-success border-3 rounded-top-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="fw-bold mb-0">
+                        <i class="fa-solid fa-rotate-left text-success me-2"></i>Módulo de Devolución de Herramientas
+                    </h4>
+                    <span class="badge bg-light text-dark fs-6">{{ alquiler.codigo }}</span>
+                </div>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <!-- Resumen de Contrato y Plazos -->
+                <div class="alert alert-light border mb-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Contratista:</strong> {{ alquiler.contratista.razon_social }}<br>
+                            <strong>Obra / Faena:</strong> {{ alquiler.obra.nombre }}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Fecha Pactada de Devolución:</strong> {{ alquiler.fecha_fin_estimada|date:"d/m/Y" }}<br>
+                            <strong>Fecha Actual de Recepción:</strong> {% now "d/m/Y" %}
+                        </div>
+                    </div>
+                </div>
+
+                <form method="post" id="devolucionForm">
+                    {% csrf_token %}
+
+                    <!-- Inspección de Herramientas Devueltas -->
+                    <h5 class="fw-bold text-secondary mb-3">
+                        <i class="fa-solid fa-clipboard-check text-warning me-2"></i>Inspección Técnica de Herramientas Devueltas
+                    </h5>
+                    <p class="text-muted small">
+                        Ingrese el horómetro final de cada equipo y su estado físico. Las herramientas con desgaste elevado o daños pasarán automáticamente a Mantenimiento.
+                    </p>
+
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Herramienta</th>
+                                    <th>Horómetro Inicial</th>
+                                    <th style="width: 170px;">Horómetro Final (h)</th>
+                                    <th style="width: 200px;">Estado Físico</th>
+                                    <th style="width: 150px;">Cobro por Daños ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for det in detalles %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ det.herramienta.codigo }}</strong> - {{ det.herramienta.nombre }}
+                                        <small class="text-muted d-block">Umbral Mantención: {{ det.herramienta.umbral_horas_mantenimiento }} h</small>
+                                    </td>
+                                    <td>{{ det.horas_iniciales }} h</td>
+                                    <td>
+                                        <input type="number" step="0.1" name="horas_finales_{{ det.id }}" class="form-control form-control-sm" value="{{ det.herramienta.horas_uso_acumuladas }}" required>
+                                    </td>
+                                    <td>
+                                        <select name="estado_fisico_{{ det.id }}" class="form-select form-select-sm">
+                                            <option value="Operativa">Operativa (Buena)</option>
+                                            <option value="Desgaste Normal">Desgaste Normal</option>
+                                            <option value="Con Daños">Con Daños Leves</option>
+                                            <option value="Averiada">Averiada Grave</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="costo_dano_{{ det.id }}" class="form-control form-control-sm" value="0" min="0">
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Datos Generales de la Recepción -->
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Nombre Responsable de Obra que Entrega *</label>
+                            {{ form.responsable_obra_nombre }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">RUT Responsable *</label>
+                            {{ form.responsable_obra_rut }}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Estado General de los Equipos Recibidos *</label>
+                            {{ form.estado_general }}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Observaciones de Recepción / Conclusiones</label>
+                            {{ form.observaciones }}
+                        </div>
+
+                        <!-- Recuadro de Firma Digital en Canvas -->
+                        <div class="col-12 border-top pt-3">
+                            <label class="form-label fw-bold text-dark fs-6 d-flex justify-content-between align-items-center">
+                                <span><i class="fa-solid fa-signature text-success me-2"></i>Firma Digital de Conformidad de Devolución *</span>
+                                <button type="button" class="btn btn-sm btn-outline-danger" id="clearSignatureBtn">
+                                    <i class="fa-solid fa-eraser me-1"></i> Limpiar Firma
+                                </button>
+                            </label>
+                            <p class="text-muted small mb-2">
+                                El responsable de obra debe estampar su firma digital validando la recepción y estado de los equipos.
+                            </p>
+
+                            <div class="signature-container text-center mx-auto">
+                                <canvas id="signaturePad" class="signature-pad"></canvas>
+                            </div>
+
+                            <!-- Input Oculto que Almacena la Firma en Base64 -->
+                            {{ form.firma_digital_data }}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                        <a href="{% url 'alquiler_detail' alquiler.pk %}" class="btn btn-light border px-4">Cancelar</a>
+                        <button type="submit" class="btn btn-success fw-bold px-4 shadow-sm" id="submitDevolucionBtn">
+                            <i class="fa-solid fa-check-double me-1"></i> Finalizar Devolución y Liquidar Contrato
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/signature.js' %}"></script>
+{% endblock %}

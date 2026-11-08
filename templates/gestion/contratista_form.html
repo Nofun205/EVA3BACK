@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }} | BuildCorp{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-dark text-white py-3 border-bottom border-warning border-3 rounded-top-4">
+                <h4 class="fw-bold mb-0"><i class="fa-solid fa-users-gear text-warning me-2"></i>{{ titulo }}</h4>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">RUT Empresa *</label>
+                            {{ form.rut_empresa }}
+                            {% if form.rut_empresa.errors %}<div class="text-danger small">{{ form.rut_empresa.errors }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Razón Social *</label>
+                            {{ form.razon_social }}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Nombre de Fantasía</label>
+                            {{ form.nombre_fantasia }}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Contacto Responsable *</label>
+                            {{ form.contacto_nombre }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Teléfono *</label>
+                            {{ form.contacto_telefono }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Email *</label>
+                            {{ form.contacto_email }}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Dirección Comercial</label>
+                            {{ form.direccion }}
+                        </div>
+
+                        <div class="col-12 border-top pt-3">
+                            <div class="form-check form-switch">
+                                {{ form.bloqueado }}
+                                <label class="form-check-label fw-bold text-danger" for="{{ form.bloqueado.id_for_label }}">
+                                    Bloqueado para solicitar arriendos
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Motivo del Bloqueo (si aplica)</label>
+                            {{ form.motivo_bloqueo }}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                        <a href="{% url 'contratistas_list' %}" class="btn btn-light border px-4">Cancelar</a>
+                        <button type="submit" class="btn btn-warning fw-bold px-4 shadow-sm">
+                            <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Contratista
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
