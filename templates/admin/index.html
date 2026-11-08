@@ -4,43 +4,67 @@
 {% block content %}
 <!-- Banner de Métricas del Dominio BuildCorp -->
 <div class="admin-kpi-grid">
-    <div class="admin-kpi-card" style="border-left: 4px solid #3b82f6;">
+    <a href="{% url 'admin:gestion_herramienta_changelist' %}" class="admin-kpi-card" style="border-left: 4px solid #3b82f6;">
         <div>
             <div class="admin-kpi-title">Parque de Herramientas</div>
-            <div class="admin-kpi-num" style="color: #1e3a8a;">{{ GLOBAL_HERRAMIENTAS_COUNT|default:"6+" }}</div>
-            <small style="color: #64748b; font-size: 11px;">Activos en catálogo</small>
+            <div class="admin-kpi-num" style="color: #1e3a8a;">{{ GLOBAL_HERRAMIENTAS_COUNT|default:"6" }}</div>
+            <small style="color: #64748b; font-size: 11px;"><i class="fa-solid fa-boxes-stacked me-1 text-primary"></i>Activos en catálogo</small>
         </div>
         <div class="admin-kpi-icon">📦</div>
-    </div>
+    </a>
 
-    <div class="admin-kpi-card" style="border-left: 4px solid #10b981;">
+    <a href="{% url 'admin:gestion_alquilerprestamo_changelist' %}" class="admin-kpi-card" style="border-left: 4px solid #10b981;">
         <div>
             <div class="admin-kpi-title">Alquileres Activos</div>
             <div class="admin-kpi-num" style="color: #065f46;">{{ GLOBAL_ALQUILERES_ACTIVOS|default:"1" }}</div>
-            <small style="color: #64748b; font-size: 11px;">En faenas de construcción</small>
+            <small style="color: #64748b; font-size: 11px;"><i class="fa-solid fa-truck me-1 text-success"></i>En faenas de construcción</small>
         </div>
         <div class="admin-kpi-icon">🚜</div>
-    </div>
+    </a>
 
-    <div class="admin-kpi-card" style="border-left: 4px solid #ef4444;">
+    <a href="{% url 'admin:gestion_alertamorosidad_changelist' %}" class="admin-kpi-card" style="border-left: 4px solid #ef4444;">
         <div>
             <div class="admin-kpi-title">Alertas por Morosidad</div>
             <div class="admin-kpi-num" style="color: #991b1b;">{{ GLOBAL_ALERTAS_MORA|default:"1" }}</div>
-            <small style="color: #64748b; font-size: 11px;">Contratistas sancionados</small>
+            <small style="color: #64748b; font-size: 11px;"><i class="fa-solid fa-triangle-exclamation me-1 text-danger"></i>Contratistas sancionados</small>
         </div>
         <div class="admin-kpi-icon">⚠️</div>
-    </div>
+    </a>
 
-    <div class="admin-kpi-card" style="border-left: 4px solid #f59e0b;">
+    <a href="{% url 'admin:gestion_mantenimiento_changelist' %}" class="admin-kpi-card" style="border-left: 4px solid #f59e0b;">
         <div>
             <div class="admin-kpi-title">Mantenimiento Preventivo</div>
             <div class="admin-kpi-num" style="color: #92400e;">{{ GLOBAL_HERRAMIENTAS_MANT|default:"1" }}</div>
-            <small style="color: #64748b; font-size: 11px;">En taller mecánico</small>
+            <small style="color: #64748b; font-size: 11px;"><i class="fa-solid fa-wrench me-1 text-warning"></i>En taller mecánico</small>
         </div>
         <div class="admin-kpi-icon">🛠️</div>
+    </a>
+</div>
+
+<!-- Barra de Acciones Rápidas del Administrador -->
+<div class="admin-quick-bar">
+    <div class="admin-quick-title">
+        <i class="fa-solid fa-bolt-lightning text-warning"></i>
+        <span>Acciones Rápidas BuildCorp</span>
+    </div>
+    <div class="admin-quick-actions">
+        <a href="{% url 'admin:gestion_alquilerprestamo_add' %}" class="admin-action-btn admin-action-btn-amber">
+            <i class="fa-solid fa-plus"></i> Nuevo Alquiler
+        </a>
+        <a href="{% url 'admin:gestion_herramienta_add' %}" class="admin-action-btn admin-action-btn-blue">
+            <i class="fa-solid fa-toolbox"></i> Registrar Herramienta
+        </a>
+        <a href="{% url 'admin:gestion_contratista_add' %}" class="admin-action-btn admin-action-btn-emerald">
+            <i class="fa-solid fa-user-plus"></i> Alta Contratista
+        </a>
+        <form action="{% url 'verificar_morosidad_global' %}" method="post" style="display: inline; margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="admin-action-btn" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; cursor: pointer;">
+                <i class="fa-solid fa-clock-rotate-left"></i> Verificar Morosidad
+            </button>
+        </form>
     </div>
 </div>
 
 {{ block.super }}
 {% endblock %}
-

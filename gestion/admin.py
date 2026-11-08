@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.utils import timezone
+from django.http import HttpResponse
+import csv
+
 from .models import (
     CategoriaHerramienta,
     Herramienta,
@@ -21,6 +24,29 @@ admin.site.site_title = "BuildCorp Portal Admin"
 admin.site.index_title = "Panel de Control Operativo - BuildCorp"
 
 
+def exportar_a_csv(modeladmin, request, queryset):
+    """Acción administrativa para exportar registros seleccionados a CSV compatible con Microsoft Excel."""
+    opts = modeladmin.model._meta
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
+    response['Content-Disposition'] = f'attachment; filename=BuildCorp_{opts.verbose_name_plural}.csv'
+    response.write(u'\ufeff'.encode('utf8')) # BOM para que Excel reconozca tildes y caracteres en español
+    writer = csv.writer(response, delimiter=';')
+
+    fields = [field for field in opts.get_fields() if not field.many_to_many and not field.one_to_many]
+    writer.writerow([field.verbose_name.title() if hasattr(field, 'verbose_name') else field.name for field in fields])
+    for obj in queryset:
+        row = []
+        for field in fields:
+            val = getattr(obj, field.name, '')
+            if callable(val):
+                val = val()
+            row.append(str(val) if val is not None else '')
+        writer.writerow(row)
+    return response
+
+exportar_a_csv.short_description = "📥 Exportar registros seleccionados a CSV / Excel"
+
+
 class HistorialEstadoHerramientaInline(admin.TabularInline):
     model = HistorialEstadoHerramienta
     extra = 0
@@ -39,6 +65,7 @@ class DetalleAlquilerInline(admin.TabularInline):
 class CategoriaHerramientaAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'descripcion', 'total_herramientas')
     search_fields = ('nombre', 'descripcion')
+    actions = [exportar_a_csv]
 
     def total_herramientas(self, obj):
         return obj.herramientas.count()
@@ -60,9 +87,10 @@ class HerramientaAdmin(admin.ModelAdmin):
     )
     list_filter = ('estado', 'categoria', 'marca', 'ubicacion_bodega')
     search_fields = ('codigo', 'nombre', 'marca', 'modelo', 'numero_serie')
+    date_hierarchy = 'fecha_creacion'
     readonly_fields = ('fecha_creacion', 'fecha_actualizacion')
     inlines = [HistorialEstadoHerramientaInline]
-    actions = ['marcar_como_en_mantenimiento', 'marcar_como_disponible']
+    actions = ['marcar_como_en_mantenimiento', 'marcar_como_disponible', exportar_a_csv]
 
     def tarifa_diaria_fmt(self, obj):
         return f"${obj.tarifa_diaria:,.0f} CLP"
@@ -70,15 +98,15 @@ class HerramientaAdmin(admin.ModelAdmin):
 
     def estado_badge(self, obj):
         colores = {
-            'DISPONIBLE': '#198754',      # Verde
-            'EN_USO': '#0d6efd',          # Azul
-            'MANTENIMIENTO': '#ffc107',   # Amarillo
-            'DADO_DE_BAJA': '#dc3545',    # Rojo
+            'DISPONIBLE': '#10b981',      # Emerald
+            'EN_USO': '#3b82f6',          # Blue
+            'MANTENIMIENTO': '#f59e0b',   # Amber
+            'DADO_DE_BAJA': '#ef4444',    # Rose
         }
         color = colores.get(obj.estado, '#6c757d')
-        texto_color = '#000' if obj.estado == 'MANTENIMIENTO' else '#fff'
+        texto_color = '#ffffff'
         return format_html(
-            '<span style="background-color: {}; color: {}; padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 11px;">{}</span>',
+            '<span style="background-color: {}; color: {}; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 11px; display: inline-block;">{}</span>',
             color,
             texto_color,
             obj.get_estado_display()
@@ -87,8 +115,8 @@ class HerramientaAdmin(admin.ModelAdmin):
 
     def mantenimiento_status(self, obj):
         if obj.requiere_mantenimiento_preventivo:
-            return format_html('<span style="color: #dc3545; font-weight: bold;">⚠️ Requiere Mantención</span>')
-        return format_html('<span style="color: #198754;">✔ Al Día</span>')
+            return format_html('<span style="color: #ef4444; font-weight: 800; background: #fee2e2; padding: 3px 8px; border-radius: 12px; font-size: 11px;">⚠️ Requiere Mantención</span>')
+        return format_html('<span style="color: #10b981; font-weight: 700; font-size: 11px;"><i class="fa-solid fa-check"></i> Al Día</span>')
     mantenimiento_status.short_description = "Alerta Mantención"
 
     @admin.action(description="🛠️ Marcar herramientas seleccionadas en Mantenimiento")
@@ -109,7 +137,9 @@ class HistorialEstadoHerramientaAdmin(admin.ModelAdmin):
     list_display = ('herramienta', 'estado_anterior', 'estado_nuevo', 'usuario', 'fecha_cambio', 'motivo')
     list_filter = ('estado_nuevo', 'fecha_cambio')
     search_fields = ('herramienta__codigo', 'herramienta__nombre', 'motivo')
+    date_hierarchy = 'fecha_cambio'
     readonly_fields = ('herramienta', 'estado_anterior', 'estado_nuevo', 'usuario', 'motivo', 'fecha_cambio')
+    actions = [exportar_a_csv]
 
 
 @admin.register(Contratista)
@@ -124,15 +154,16 @@ class ContratistaAdmin(admin.ModelAdmin):
     )
     list_filter = ('bloqueado',)
     search_fields = ('rut_empresa', 'razon_social', 'nombre_fantasia', 'contacto_nombre', 'contacto_email')
-    actions = ['bloquear_contratistas', 'desbloquear_contratistas']
+    date_hierarchy = 'fecha_creacion'
+    actions = ['bloquear_contratistas', 'desbloquear_contratistas', exportar_a_csv]
 
     def estado_bloqueo_badge(self, obj):
         if obj.bloqueado:
             return format_html(
-                '<span style="background-color: #dc3545; color: white; padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 11px;">⛔ BLOQUEADO</span>'
+                '<span style="background-color: #ef4444; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 11px;">⛔ BLOQUEADO</span>'
             )
         return format_html(
-            '<span style="background-color: #198754; color: white; padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 11px;">✔ ACTIVO</span>'
+            '<span style="background-color: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 11px;">✔ HABILITADO</span>'
         )
     estado_bloqueo_badge.short_description = "Estado Comercial"
 
@@ -154,6 +185,7 @@ class ObraAdmin(admin.ModelAdmin):
     list_display = ('codigo', 'nombre', 'contratista', 'comuna_ciudad', 'encargado_obra', 'activa')
     list_filter = ('activa', 'comuna_ciudad')
     search_fields = ('codigo', 'nombre', 'direccion', 'encargado_obra', 'contratista__razon_social')
+    actions = [exportar_a_csv]
 
 
 @admin.register(AlquilerPrestamo)
@@ -171,8 +203,9 @@ class AlquilerPrestamoAdmin(admin.ModelAdmin):
     )
     list_filter = ('estado', 'fecha_inicio', 'fecha_fin_estimada')
     search_fields = ('codigo', 'contratista__razon_social', 'obra__nombre')
+    date_hierarchy = 'fecha_inicio'
     inlines = [DetalleAlquilerInline]
-    actions = ['verificar_morosidad_lote']
+    actions = ['verificar_morosidad_lote', exportar_a_csv]
 
     def costo_estimado_fmt(self, obj):
         return f"${obj.costo_estimado:,.0f} CLP"
@@ -180,21 +213,21 @@ class AlquilerPrestamoAdmin(admin.ModelAdmin):
 
     def recargo_mora_fmt(self, obj):
         if obj.recargo_mora > 0:
-            return format_html('<span style="color: #dc3545; font-weight: bold;">${:,.0f} CLP</span>', obj.recargo_mora)
+            return format_html('<span style="color: #ef4444; font-weight: 800; background: #fee2e2; padding: 3px 8px; border-radius: 12px;">+${:,.0f} CLP</span>', obj.recargo_mora)
         return "$0 CLP"
     recargo_mora_fmt.short_description = "Recargo Mora"
 
     def estado_badge(self, obj):
         colores = {
-            'SOLICITADO': '#6c757d',
-            'ACTIVO': '#0d6efd',
-            'DEVUELTO': '#198754',
-            'VENCIDO': '#dc3545',
-            'CANCELADO': '#212529',
+            'SOLICITADO': '#64748b',
+            'ACTIVO': '#3b82f6',
+            'DEVUELTO': '#10b981',
+            'VENCIDO': '#ef4444',
+            'CANCELADO': '#0f172a',
         }
-        color = colores.get(obj.estado, '#6c757d')
+        color = colores.get(obj.estado, '#64748b')
         return format_html(
-            '<span style="background-color: {}; color: white; padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 11px;">{}</span>',
+            '<span style="background-color: {}; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 11px;">{}</span>',
             color,
             obj.get_estado_display()
         )
@@ -213,10 +246,12 @@ class AlquilerPrestamoAdmin(admin.ModelAdmin):
 class RegistroEntregaAdmin(admin.ModelAdmin):
     list_display = ('alquiler', 'fecha_hora_entrega', 'responsable_obra_nombre', 'responsable_obra_rut', 'firma_preview')
     search_fields = ('alquiler__codigo', 'responsable_obra_nombre', 'responsable_obra_rut')
+    date_hierarchy = 'fecha_hora_entrega'
+    actions = [exportar_a_csv]
 
     def firma_preview(self, obj):
         if obj.firma_digital:
-            return format_html('<img src="{}" style="max-height: 40px; border: 1px solid #ccc; background: #fff;" />', obj.firma_digital.url)
+            return format_html('<img src="{}" style="max-height: 40px; border: 1px solid #cbd5e1; border-radius: 4px; background: #fff;" />', obj.firma_digital.url)
         return "Sin Firma"
     firma_preview.short_description = "Firma Digital"
 
@@ -225,10 +260,12 @@ class RegistroEntregaAdmin(admin.ModelAdmin):
 class RegistroDevolucionAdmin(admin.ModelAdmin):
     list_display = ('alquiler', 'fecha_hora_devolucion', 'responsable_obra_nombre', 'estado_general_equipos', 'firma_preview')
     search_fields = ('alquiler__codigo', 'responsable_obra_nombre', 'responsable_obra_rut')
+    date_hierarchy = 'fecha_hora_devolucion'
+    actions = [exportar_a_csv]
 
     def firma_preview(self, obj):
         if obj.firma_digital:
-            return format_html('<img src="{}" style="max-height: 40px; border: 1px solid #ccc; background: #fff;" />', obj.firma_digital.url)
+            return format_html('<img src="{}" style="max-height: 40px; border: 1px solid #cbd5e1; border-radius: 4px; background: #fff;" />', obj.firma_digital.url)
         return "Sin Firma"
     firma_preview.short_description = "Firma Digital"
 
@@ -246,7 +283,8 @@ class MantenimientoAdmin(admin.ModelAdmin):
     )
     list_filter = ('tipo', 'estado', 'fecha_programada')
     search_fields = ('herramienta__codigo', 'herramienta__nombre', 'tecnico_responsable', 'descripcion_trabajo')
-    actions = ['marcar_completado']
+    date_hierarchy = 'fecha_programada'
+    actions = ['marcar_completado', exportar_a_csv]
 
     def costo_fmt(self, obj):
         return f"${obj.costo:,.0f} CLP"
@@ -254,17 +292,15 @@ class MantenimientoAdmin(admin.ModelAdmin):
 
     def estado_badge(self, obj):
         colores = {
-            'PROGRAMADO': '#ffc107',
-            'EN_PROCESO': '#0d6efd',
-            'COMPLETADO': '#198754',
-            'CANCELADO': '#dc3545',
+            'PROGRAMADO': '#f59e0b',
+            'EN_PROCESO': '#3b82f6',
+            'COMPLETADO': '#10b981',
+            'CANCELADO': '#ef4444',
         }
-        color = colores.get(obj.estado, '#6c757d')
-        texto_color = '#000' if obj.estado == 'PROGRAMADO' else '#fff'
+        color = colores.get(obj.estado, '#64748b')
         return format_html(
-            '<span style="background-color: {}; color: {}; padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 11px;">{}</span>',
+            '<span style="background-color: {}; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 11px;">{}</span>',
             color,
-            texto_color,
             obj.get_estado_display()
         )
     estado_badge.short_description = "Estado Mantenimiento"
@@ -289,7 +325,8 @@ class AlertaMorosidadAdmin(admin.ModelAdmin):
     )
     list_filter = ('resuelta', 'bloqueo_aplicado', 'fecha_deteccion')
     search_fields = ('alquiler__codigo', 'contratista__razon_social')
-    actions = ['resolver_alertas_seleccionadas']
+    date_hierarchy = 'fecha_deteccion'
+    actions = ['resolver_alertas_seleccionadas', exportar_a_csv]
 
     def multa_fmt(self, obj):
         return f"${obj.monto_multa_calculada:,.0f} CLP"
@@ -297,14 +334,14 @@ class AlertaMorosidadAdmin(admin.ModelAdmin):
 
     def bloqueo_badge(self, obj):
         if obj.bloqueo_aplicado:
-            return format_html('<span style="color: #dc3545; font-weight: bold;">⛔ Sancionado</span>')
+            return format_html('<span style="color: #ef4444; font-weight: 800;">⛔ Sancionado</span>')
         return "No"
     bloqueo_badge.short_description = "Bloqueo"
 
     def estado_alerta_badge(self, obj):
         if obj.resuelta:
-            return format_html('<span style="background-color: #198754; color: white; padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 11px;">RESUELTA</span>')
-        return format_html('<span style="background-color: #dc3545; color: white; padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 11px;">PENDIENTE</span>')
+            return format_html('<span style="background-color: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 11px;">RESUELTA</span>')
+        return format_html('<span style="background-color: #ef4444; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 11px;">PENDIENTE</span>')
     estado_alerta_badge.short_description = "Estado"
 
     @admin.action(description="✔ Regularizar y resolver alertas seleccionadas (desbloquea contratistas)")

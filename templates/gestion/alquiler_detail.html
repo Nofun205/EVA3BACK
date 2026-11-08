@@ -41,6 +41,56 @@
     </div>
 </div>
 
+<!-- Flujo Operativo Visual (Workflow Stepper) -->
+<div class="card border-0 shadow-sm rounded-4 mb-4 p-4">
+    <div class="stepper-wrapper d-flex justify-content-between position-relative">
+        <!-- Paso 1: Solicitud -->
+        <div class="stepper-item text-center">
+            <div class="step-circle bg-success text-white"><i class="fa-solid fa-check"></i></div>
+            <div class="step-label fw-bold small mt-2">1. Solicitado</div>
+            <div class="step-date text-muted" style="font-size: 11px;">{{ alquiler.fecha_creacion|date:"d/m/Y" }}</div>
+        </div>
+        <!-- Paso 2: Entrega -->
+        <div class="stepper-item text-center">
+            <div class="step-circle {% if alquiler.entrega %}bg-success text-white{% else %}bg-secondary text-white opacity-50{% endif %}">
+                {% if alquiler.entrega %}<i class="fa-solid fa-signature"></i>{% else %}2{% endif %}
+            </div>
+            <div class="step-label fw-bold small mt-2">2. Despacho & Firma</div>
+            <div class="step-date text-muted" style="font-size: 11px;">
+                {% if alquiler.entrega %}{{ alquiler.entrega.fecha_hora_entrega|date:"d/m/Y" }}{% else %}Pendiente{% endif %}
+            </div>
+        </div>
+        <!-- Paso 3: En Faena -->
+        <div class="stepper-item text-center">
+            <div class="step-circle {% if alquiler.estado == 'ACTIVO' %}bg-primary text-white animate__animated animate__pulse animate__infinite{% elif alquiler.devolucion %}bg-success text-white{% else %}bg-secondary text-white opacity-50{% endif %}">
+                {% if alquiler.devolucion %}<i class="fa-solid fa-check"></i>{% else %}<i class="fa-solid fa-truck"></i>{% endif %}
+            </div>
+            <div class="step-label fw-bold small mt-2">3. En Faena</div>
+            <div class="step-date text-muted" style="font-size: 11px;">{{ alquiler.fecha_inicio|date:"d/m/Y" }}</div>
+        </div>
+        <!-- Paso 4: Devolución -->
+        <div class="stepper-item text-center">
+            <div class="step-circle {% if alquiler.devolucion %}bg-success text-white{% elif alquiler.estado == 'VENCIDO' %}bg-danger text-white{% else %}bg-secondary text-white opacity-50{% endif %}">
+                {% if alquiler.devolucion %}<i class="fa-solid fa-signature"></i>{% elif alquiler.estado == 'VENCIDO' %}<i class="fa-solid fa-triangle-exclamation"></i>{% else %}4{% endif %}
+            </div>
+            <div class="step-label fw-bold small mt-2">4. Devolución & Revisión</div>
+            <div class="step-date text-muted" style="font-size: 11px;">
+                {% if alquiler.devolucion %}{{ alquiler.devolucion.fecha_hora_devolucion|date:"d/m/Y" }}{% else %}Pactada: {{ alquiler.fecha_fin_estimada|date:"d/m/Y" }}{% endif %}
+            </div>
+        </div>
+        <!-- Paso 5: Liquidado -->
+        <div class="stepper-item text-center">
+            <div class="step-circle {% if alquiler.estado == 'DEVUELTO' %}bg-success text-white{% else %}bg-secondary text-white opacity-50{% endif %}">
+                {% if alquiler.estado == 'DEVUELTO' %}<i class="fa-solid fa-file-invoice-dollar"></i>{% else %}5{% endif %}
+            </div>
+            <div class="step-label fw-bold small mt-2">5. Liquidado</div>
+            <div class="step-date text-muted" style="font-size: 11px;">
+                {% if alquiler.estado == 'DEVUELTO' %}Cerrado{% else %}En curso{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Banner de Alerta si está Vencido -->
 {% if alquiler.estado == 'VENCIDO' or alquiler.dias_retraso > 0 %}
 <div class="alert alert-danger border-danger shadow-sm mb-4">

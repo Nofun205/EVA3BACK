@@ -16,6 +16,20 @@
 <!-- Filtros y Búsqueda -->
 <div class="card border-0 shadow-sm rounded-3 mb-4">
     <div class="card-body p-3">
+        <!-- Filtros Rápidos de Categoría -->
+        <div class="d-flex gap-2 mb-3 flex-wrap align-items-center">
+            <span class="small fw-bold text-muted me-1"><i class="fa-solid fa-tags me-1 text-warning"></i>Categorías:</span>
+            <a href="{% url 'herramientas_list' %}" class="badge rounded-pill text-decoration-none {% if not categoria_filtro %}bg-primary text-white{% else %}bg-light text-secondary border{% endif %} px-3 py-2">
+                Todas
+            </a>
+            {% for cat in categorias %}
+            <a href="{% url 'herramientas_list' %}?categoria={{ cat.id }}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}"
+               class="badge rounded-pill text-decoration-none {% if categoria_filtro == cat.id|stringformat:'s' %}bg-primary text-white{% else %}bg-light text-secondary border{% endif %} px-3 py-2">
+                {{ cat.nombre }}
+            </a>
+            {% endfor %}
+        </div>
+
         <form method="get" class="row g-2 align-items-center">
             <div class="col-md-4">
                 <div class="input-group">
@@ -81,7 +95,17 @@
                     <td>{{ tool.marca }} {{ tool.modelo }}</td>
                     <td class="fw-semibold text-success">${{ tool.tarifa_diaria|floatformat:0 }} CLP</td>
                     <td>
-                        <span class="badge bg-light text-dark border">{{ tool.horas_uso_acumuladas }} hrs</span>
+                        <div class="d-flex flex-column">
+                            <span class="fw-bold small {% if tool.requiere_mantenimiento_preventivo %}text-danger{% else %}text-dark{% endif %}">
+                                {{ tool.horas_uso_acumuladas }} hrs
+                            </span>
+                            <small class="text-muted" style="font-size: 11px;">Umbral: {{ tool.umbral_horas_mantenimiento }}h</small>
+                            <div class="progress mt-1" style="height: 5px; width: 85px;">
+                                <div class="progress-bar {% if tool.requiere_mantenimiento_preventivo %}bg-danger{% else %}bg-primary{% endif %}"
+                                     role="progressbar"
+                                     style="width: {% widthratio tool.horas_uso_acumuladas tool.umbral_horas_mantenimiento 100 %}%;"></div>
+                            </div>
+                        </div>
                     </td>
                     <td>
                         {% if tool.estado == 'DISPONIBLE' %}
@@ -106,8 +130,8 @@
                         {% endif %}
                     </td>
                     <td class="text-end">
-                        <a href="{% url 'herramienta_detail' tool.pk %}" class="btn btn-sm btn-light border" title="Ver Trazabilidad y Detalle">
-                            <i class="fa-solid fa-eye text-primary"></i>
+                        <a href="{% url 'herramienta_detail' tool.pk %}" class="btn btn-sm btn-light border" title="Ver Ficha y QR de Activo">
+                            <i class="fa-solid fa-qrcode text-primary"></i>
                         </a>
                         <a href="{% url 'herramienta_update' tool.pk %}" class="btn btn-sm btn-light border" title="Editar">
                             <i class="fa-solid fa-pen-to-square text-secondary"></i>

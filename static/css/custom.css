@@ -274,6 +274,65 @@ body {
 }
 
 /* ==============================================================================
+   WORKFLOW STEPPER EN ALQUILERES
+   ============================================================================== */
+.stepper-wrapper {
+    align-items: center;
+    position: relative;
+    padding: 10px 0;
+}
+
+.stepper-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 30px;
+    left: 40px;
+    right: 40px;
+    height: 3px;
+    background: #e2e8f0;
+    z-index: 1;
+}
+
+.stepper-item {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+}
+
+.step-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border: 3px solid #ffffff;
+    transition: transform 0.2s;
+}
+
+.step-circle:hover {
+    transform: scale(1.1);
+}
+
+/* ==============================================================================
+   ASSET PLATE & ETIQUETAS DE BODEGA
+   ============================================================================== */
+.asset-plate-wrapper {
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.asset-plate-wrapper:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+}
+
+/* ==============================================================================
    PIE DE PÁGINA (FOOTER)
    ============================================================================== */
 .footer-buildcorp {
@@ -289,4 +348,19 @@ body {
     padding: 5px 10px;
     border-radius: 12px;
     font-weight: 600;
+}
+
+/* ==============================================================================
+   MICRO-INTERACCIONES Y ANIMACIONES
+   ============================================================================== */
+.btn-action-check:active {
+    transform: scale(0.97);
+}
+
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
 }
