@@ -82,9 +82,10 @@ python manage.py migrate
 python manage.py collectstatic --noinput
 python manage.py seed_data
 
-# Asegurar permisos en carpetas media y staticfiles
-sudo chown -R ubuntu:www-data media staticfiles
-sudo chmod -R 775 media staticfiles
+# Asegurar permisos para que Nginx (www-data) pueda acceder a /home/ubuntu/EVA3BACK
+sudo chmod 755 /home/ubuntu
+sudo chown -R ubuntu:www-data /home/ubuntu/EVA3BACK/media /home/ubuntu/EVA3BACK/staticfiles
+sudo chmod -R 775 /home/ubuntu/EVA3BACK/media /home/ubuntu/EVA3BACK/staticfiles
 
 # 7. Configuración de Gunicorn y Nginx
 echo "==> [7/7] Configurando servicios de producción (Gunicorn + Nginx)..."
