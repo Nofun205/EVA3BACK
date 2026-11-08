@@ -1,62 +1,151 @@
-/* ==========================================================================
-   BUILDCORP - ESTILOS PERSONALIZADOS
-   ========================================================================== */
+/* ==============================================================================
+   BUILDCORP - SISTEMA DE ALQUILER Y CONTROL DE HERRAMIENTAS
+   HOJA DE ESTILOS VISUAL MODERNA (PRODUCCIÓN)
+   ============================================================================== */
 
 :root {
-    --bc-primary: #0f172a;       /* Slate 900 */
-    --bc-secondary: #1e293b;     /* Slate 800 */
-    --bc-accent: #f59e0b;        /* Amber 500 (Construcción) */
-    --bc-accent-hover: #d97706;
-    --bc-success: #10b981;
-    --bc-danger: #ef4444;
-    --bc-warning: #f59e0b;
-    --bc-info: #0ea5e9;
-    --bc-bg: #f8fafc;
+    --bc-navy-950: #090d16;
+    --bc-navy-900: #0f172a;
+    --bc-navy-800: #1e293b;
+    --bc-navy-700: #334155;
+    --bc-amber-500: #f59e0b;
+    --bc-amber-600: #d97706;
+    --bc-emerald-500: #10b981;
+    --bc-emerald-600: #059669;
+    --bc-rose-500: #ef4444;
+    --bc-rose-600: #dc2626;
+    --bc-blue-500: #3b82f6;
+    --bc-blue-600: #2563eb;
+    --bc-bg-app: #f8fafc;
     --bc-card-bg: #ffffff;
+    --bc-border: #e2e8f0;
+    --bc-radius: 12px;
+    --bc-shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+    --bc-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --bc-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
 }
 
 body {
-    background-color: var(--bc-bg);
-    color: #334155;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: var(--bc-bg-app);
+    color: #1e293b;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    letter-spacing: -0.01em;
 }
 
-/* Navbar */
+/* ==============================================================================
+   NAVBAR & HEADER
+   ============================================================================== */
 .navbar-buildcorp {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    border-bottom: 3px solid var(--bc-accent);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #090d16 0%, #1e293b 100%);
+    border-bottom: 3px solid var(--bc-amber-500);
+    box-shadow: var(--bc-shadow-md);
+    padding-top: 12px;
+    padding-bottom: 12px;
 }
 
 .navbar-brand-logo {
-    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.brand-icon {
+    font-size: 1.5rem;
+    color: var(--bc-amber-500);
+    filter: drop-shadow(0 2px 4px rgba(245, 158, 11, 0.4));
+}
+
+.brand-text {
+    font-size: 1.35rem;
     font-weight: 800;
-    color: #ffffff !important;
+    color: #ffffff;
     letter-spacing: 0.5px;
 }
 
-.navbar-brand-logo span {
-    color: var(--bc-accent);
+.brand-badge {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--bc-amber-500);
+    border: 1px solid var(--bc-amber-500);
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 1px;
 }
 
 .nav-link {
     color: #cbd5e1 !important;
-    font-weight: 500;
-    transition: color 0.2s ease;
+    font-weight: 600;
+    font-size: 0.92rem;
+    padding: 8px 14px !important;
+    border-radius: 8px;
+    transition: all 0.2s ease;
 }
 
-.nav-link:hover, .nav-link.active {
-    color: var(--bc-accent) !important;
+.nav-link:hover {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.06);
 }
 
-/* Tarjetas y Paneles */
-.card-kpi {
+.nav-link.active {
+    color: var(--bc-amber-500) !important;
+    background: rgba(245, 158, 11, 0.12);
+}
+
+.btn-action-check {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #0f172a;
+    font-weight: 700;
     border: none;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border-radius: 20px;
+    padding: 6px 14px;
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.btn-action-check:hover {
+    color: #0f172a;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.5);
+}
+
+.btn-user-pill {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 4px 12px;
+    transition: all 0.2s;
+}
+
+.btn-user-pill:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.user-avatar-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bc-amber-500);
+    color: #0f172a;
+    font-weight: 800;
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ==============================================================================
+   TARJETAS Y KPIS DEL DASHBOARD
+   ============================================================================== */
+.card-kpi {
+    background: #ffffff;
+    border: 1px solid var(--bc-border);
+    border-radius: var(--bc-radius);
+    box-shadow: var(--bc-shadow-sm);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     overflow: hidden;
     position: relative;
@@ -64,76 +153,140 @@ body {
 
 .card-kpi:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--bc-shadow-lg);
 }
 
 .card-kpi .kpi-icon {
-    font-size: 2.2rem;
-    opacity: 0.85;
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
 }
 
 .card-kpi .kpi-value {
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: 2.1rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
 }
 
-/* Badges de Estados */
+/* ==============================================================================
+   BADGES DE ESTADOS DEL DOMINIO
+   ============================================================================== */
 .badge-disponible {
-    background-color: #d1fae5;
-    color: #065f46;
-    border: 1px solid #a7f3d0;
+    background-color: #ecfdf5 !important;
+    color: #065f46 !important;
+    border: 1px solid #a7f3d0 !important;
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 5px 12px;
 }
 
 .badge-en-uso {
-    background-color: #dbeafe;
-    color: #1e40af;
-    border: 1px solid #bfdbfe;
+    background-color: #eff6ff !important;
+    color: #1e40af !important;
+    border: 1px solid #bfdbfe !important;
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 5px 12px;
 }
 
 .badge-mantenimiento {
-    background-color: #fef3c7;
-    color: #92400e;
-    border: 1px solid #fde68a;
+    background-color: #fffbeb !important;
+    color: #92400e !important;
+    border: 1px solid #fde68a !important;
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 5px 12px;
 }
 
 .badge-baja {
-    background-color: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #fecaca;
+    background-color: #fef2f2 !important;
+    color: #991b1b !important;
+    border: 1px solid #fecaca !important;
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 5px 12px;
 }
 
-/* Firma Digital Canvas */
+/* ==============================================================================
+   TABLAS Y TARJETAS DE DATOS
+   ============================================================================== */
+.card-table-wrapper {
+    background: #ffffff;
+    border: 1px solid var(--bc-border);
+    border-radius: var(--bc-radius);
+    box-shadow: var(--bc-shadow-sm);
+    overflow: hidden;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background-color: #f8fafc;
+    color: #475569;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--bc-border);
+}
+
+.table tbody td {
+    padding: 14px 16px;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* ==============================================================================
+   MÓDULO DE FIRMA DIGITAL EN CANVAS
+   ============================================================================== */
 .signature-container {
     background: #ffffff;
     border: 2px dashed #94a3b8;
-    border-radius: 10px;
-    padding: 10px;
+    border-radius: 12px;
+    padding: 14px;
     display: inline-block;
     width: 100%;
-    max-width: 600px;
+    max-width: 650px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
 }
 
 .signature-pad {
     width: 100%;
-    height: 220px;
+    height: 230px;
     background-color: #ffffff;
     border: 1px solid #cbd5e1;
-    border-radius: 6px;
+    border-radius: 8px;
     touch-action: none;
     cursor: crosshair;
 }
 
-/* Tablas */
-.table-hover tbody tr:hover {
-    background-color: #f1f5f9;
-}
-
-/* Footer */
-footer {
+/* ==============================================================================
+   PIE DE PÁGINA (FOOTER)
+   ============================================================================== */
+.footer-buildcorp {
     margin-top: auto;
-    background: #0f172a;
+    background: #090d16;
     color: #94a3b8;
-    padding: 20px 0;
-    border-top: 1px solid #334155;
+    font-size: 0.85rem;
+    border-top: 1px solid #1e293b;
 }
 
+.badge-tech-pill {
+    font-size: 0.72rem;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+}

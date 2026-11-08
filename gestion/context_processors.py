@@ -11,6 +11,7 @@ def alertas_globales(request):
         alertas_mora_count = AlertaMorosidad.objects.filter(resuelta=False).count()
         contratistas_bloqueados_count = Contratista.objects.filter(bloqueado=True).count()
         herramientas_mantenimiento_count = Herramienta.objects.filter(estado='MANTENIMIENTO').count()
+        herramientas_total_count = Herramienta.objects.count()
         alquileres_activos_count = AlquilerPrestamo.objects.filter(estado='ACTIVO').count()
         alquileres_vencidos_count = AlquilerPrestamo.objects.filter(estado='VENCIDO').count()
 
@@ -18,6 +19,7 @@ def alertas_globales(request):
             'GLOBAL_ALERTAS_MORA': alertas_mora_count,
             'GLOBAL_CONTRATISTAS_BLOQUEADOS': contratistas_bloqueados_count,
             'GLOBAL_HERRAMIENTAS_MANT': herramientas_mantenimiento_count,
+            'GLOBAL_HERRAMIENTAS_COUNT': herramientas_total_count,
             'GLOBAL_ALQUILERES_ACTIVOS': alquileres_activos_count,
             'GLOBAL_ALQUILERES_VENCIDOS': alquileres_vencidos_count,
         }

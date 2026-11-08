@@ -5,43 +5,28 @@
 
 {% block branding %}
 <div id="site-name">
-    <a href="{% url 'admin:index' %}" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit;">
-        <span style="font-size: 24px;">🏗️</span>
+    <a href="{% url 'admin:index' %}" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit;">
+        <span style="font-size: 28px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">🏗️</span>
         <div>
-            <span style="font-size: 18px; font-weight: 800; letter-spacing: 0.5px; color: #ffc107;">BUILDCORP</span>
-            <span style="font-size: 13px; opacity: 0.85; font-weight: 400; display: block;">Sistema de Alquiler y Control de Herramientas</span>
+            <span style="font-size: 19px; font-weight: 800; letter-spacing: 0.5px; color: #f59e0b; display: inline-block;">BUILDCORP</span>
+            <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; display: block; font-weight: 600;">Control & Maquinaria</span>
         </div>
     </a>
 </div>
 {% endblock %}
 
-{% block extrahead %}
+{% block extrastyle %}
 {{ block.super }}
-<style>
-    :root {
-        --primary: #1e293b;
-        --secondary: #0f172a;
-        --accent: #ffc107;
-    }
-    #header {
-        background: #0f172a !important;
-        color: #f8fafc !important;
-        border-bottom: 3px solid #ffc107;
-    }
-    .module h2, .module caption, .inline-group h2 {
-        background: #1e293b !important;
-        color: #f8fafc !important;
-    }
-    div.breadcrumbs {
-        background: #1e293b !important;
-    }
-    .button, input[type=submit], input[type=button], .submit-row input, a.button {
-        background: #0d6efd !important;
-        border-radius: 6px;
-    }
-    .button.default, input[type=submit].default, .submit-row input.default {
-        background: #198754 !important;
-    }
-</style>
+<link rel="stylesheet" type="text/css" href="{% static 'css/custom_admin.css' %}">
 {% endblock %}
 
+{% block nav-global %}
+<div style="float: right; margin-top: 10px; display: flex; gap: 10px;">
+    <a href="{% url 'dashboard' %}" class="button" style="background: rgba(245, 158, 11, 0.15) !important; color: #f59e0b !important; border: 1px solid #f59e0b !important; font-size: 12px; text-decoration: none; padding: 4px 12px; border-radius: 6px;">
+        ← Ir a Plataforma Web
+    </a>
+    <a href="/api/" target="_blank" class="button" style="background: rgba(59, 130, 246, 0.15) !important; color: #60a5fa !important; border: 1px solid #3b82f6 !important; font-size: 12px; text-decoration: none; padding: 4px 12px; border-radius: 6px;">
+        API REST (DRF) ↗
+    </a>
+</div>
+{% endblock %}

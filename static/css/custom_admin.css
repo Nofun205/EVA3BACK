@@ -1,0 +1,308 @@
+/* ==============================================================================
+   BUILDCORP - CUSTOM DJANGO ADMIN STYLESHEET
+   Transformación visual moderna, corporativa y accesible
+   ============================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+    --bc-navy-900: #0f172a;
+    --bc-navy-800: #1e293b;
+    --bc-navy-700: #334155;
+    --bc-amber-500: #f59e0b;
+    --bc-amber-600: #d97706;
+    --bc-emerald-500: #10b981;
+    --bc-rose-500: #ef4444;
+    --bc-blue-500: #3b82f6;
+    --bc-gray-50: #f8fafc;
+    --bc-gray-100: #f1f5f9;
+    --bc-gray-200: #e2e8f0;
+    --bc-border: #e2e8f0;
+    --bc-radius: 10px;
+    --bc-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --bc-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --bc-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+    background-color: var(--bc-gray-50) !important;
+    color: #1e293b !important;
+}
+
+/* Header de Django Admin */
+#header {
+    background: linear-gradient(135deg, var(--bc-navy-900) 0%, var(--bc-navy-800) 100%) !important;
+    color: #ffffff !important;
+    border-bottom: 3px solid var(--bc-amber-500) !important;
+    padding: 14px 30px !important;
+    box-shadow: var(--bc-shadow-md);
+}
+
+#header a:link, #header a:visited {
+    color: #ffffff !important;
+}
+
+#branding h1 {
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.01em;
+}
+
+#user-tools {
+    font-size: 0.85rem !important;
+    font-weight: 500;
+}
+
+#user-tools a {
+    border-bottom: 1px dotted var(--bc-amber-500) !important;
+    color: #f8fafc !important;
+    padding: 2px 4px;
+    transition: all 0.2s;
+}
+
+#user-tools a:hover {
+    color: var(--bc-amber-500) !important;
+}
+
+/* Breadcrumbs (Migas de pan) */
+div.breadcrumbs {
+    background: var(--bc-navy-800) !important;
+    color: #cbd5e1 !important;
+    font-size: 0.85rem !important;
+    padding: 10px 30px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+div.breadcrumbs a {
+    color: #94a3b8 !important;
+    font-weight: 500;
+}
+
+div.breadcrumbs a:hover {
+    color: var(--bc-amber-500) !important;
+}
+
+/* Contenido Principal */
+#content {
+    padding: 25px 30px !important;
+}
+
+#content h1 {
+    font-size: 1.5rem !important;
+    font-weight: 800 !important;
+    color: var(--bc-navy-900) !important;
+    margin-bottom: 20px !important;
+}
+
+/* Módulos y Tablas */
+.module {
+    background: #ffffff !important;
+    border: 1px solid var(--bc-border) !important;
+    border-radius: var(--bc-radius) !important;
+    box-shadow: var(--bc-shadow-sm) !important;
+    overflow: hidden;
+    margin-bottom: 25px !important;
+}
+
+.module h2, .module caption {
+    background: linear-gradient(to right, var(--bc-navy-800), var(--bc-navy-700)) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    letter-spacing: 0.02em;
+    padding: 12px 18px !important;
+}
+
+.module table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+}
+
+/* Tablas en ChangeList */
+#changelist {
+    background: transparent !important;
+}
+
+#changelist table thead th {
+    background: var(--bc-gray-100) !important;
+    color: var(--bc-navy-700) !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em;
+    padding: 12px 14px !important;
+    border-bottom: 2px solid var(--bc-border) !important;
+}
+
+#changelist table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+#changelist table tbody tr:hover {
+    background-color: #f8fafc !important;
+}
+
+#changelist table tbody td, #changelist table tbody th {
+    padding: 12px 14px !important;
+    border-bottom: 1px solid var(--bc-border) !important;
+    font-size: 0.88rem !important;
+}
+
+/* Barra lateral de filtros (Filter Sidebar) */
+#changelist-filter {
+    background: #ffffff !important;
+    border: 1px solid var(--bc-border) !important;
+    border-radius: var(--bc-radius) !important;
+    box-shadow: var(--bc-shadow-sm) !important;
+    padding: 15px !important;
+    margin-left: 20px !important;
+}
+
+#changelist-filter h2 {
+    background: transparent !important;
+    color: var(--bc-navy-900) !important;
+    font-size: 0.95rem !important;
+    font-weight: 800 !important;
+    padding: 0 0 10px 0 !important;
+    border-bottom: 2px solid var(--bc-amber-500) !important;
+    margin-bottom: 15px !important;
+}
+
+#changelist-filter h3 {
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    color: var(--bc-navy-700) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-top: 15px !important;
+}
+
+#changelist-filter ul {
+    padding-left: 0 !important;
+}
+
+#changelist-filter li.selected a {
+    color: var(--bc-amber-600) !important;
+    font-weight: 700 !important;
+    background: rgba(245, 158, 11, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* Botones */
+.button, input[type=submit], input[type=button], .submit-row input, a.button {
+    background: var(--bc-blue-500) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    padding: 8px 18px !important;
+    transition: all 0.2s ease !important;
+    box-shadow: var(--bc-shadow-sm);
+    cursor: pointer;
+}
+
+.button:hover, input[type=submit]:hover, a.button:hover {
+    background: #2563eb !important;
+    transform: translateY(-1px);
+    box-shadow: var(--bc-shadow-md);
+}
+
+.button.default, input[type=submit].default, .submit-row input.default {
+    background: var(--bc-emerald-500) !important;
+}
+
+.button.default:hover, input[type=submit].default:hover {
+    background: #059669 !important;
+}
+
+/* Acciones en lote */
+.actions {
+    background: #ffffff !important;
+    border: 1px solid var(--bc-border) !important;
+    border-radius: 8px !important;
+    padding: 10px 15px !important;
+    margin-bottom: 15px !important;
+    box-shadow: var(--bc-shadow-sm);
+}
+
+.actions select {
+    border: 1px solid var(--bc-border) !important;
+    border-radius: 6px !important;
+    padding: 6px 12px !important;
+    font-family: inherit;
+    font-size: 0.88rem;
+}
+
+/* Buscador */
+#toolbar form input[type="text"] {
+    border: 1px solid var(--bc-border) !important;
+    border-radius: 8px !important;
+    padding: 8px 14px !important;
+    font-size: 0.88rem !important;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+}
+
+#toolbar form input[type="text"]:focus {
+    border-color: var(--bc-blue-500) !important;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+}
+
+/* Paginación */
+.paginator {
+    background: #ffffff !important;
+    border: 1px solid var(--bc-border) !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    margin-top: 15px !important;
+    font-size: 0.85rem;
+}
+
+/* Dashboard Banner en Index */
+.admin-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.admin-kpi-card {
+    background: #ffffff;
+    border: 1px solid var(--bc-border);
+    border-radius: var(--bc-radius);
+    padding: 18px 20px;
+    box-shadow: var(--bc-shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.admin-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--bc-shadow-md);
+}
+
+.admin-kpi-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--bc-navy-700);
+    letter-spacing: 0.05em;
+}
+
+.admin-kpi-num {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-top: 4px;
+    line-height: 1;
+}
+
+.admin-kpi-icon {
+    font-size: 2rem;
+    opacity: 0.85;
+}
