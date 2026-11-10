@@ -593,3 +593,239 @@ div.breadcrumbs a:hover {
     color: #ffffff;
     border-color: var(--bc-emerald-500);
 }
+
+
+/* ==============================================================================
+   FORMULARIOS, INPUTS Y DETALLE DE EDICIÓN (CHANGE FORM)
+   Garantiza contraste óptimo, legibilidad impecable y estilo SaaS corporativo
+   ============================================================================== */
+
+/* Harmonización de Variables Nativas de Django 5/6 */
+:root {
+    --primary: #0f172a !important;
+    --secondary: #1e293b !important;
+    --accent: #f59e0b !important;
+    --body-bg: #f8fafc !important;
+    --body-fg: #1e293b !important;
+    --darkened-bg: #ffffff !important;
+    --border-color: #cbd5e1 !important;
+}
+
+/* Contenedor del Formulario */
+.change-form #content-main {
+    max-width: 1200px;
+}
+
+fieldset.module {
+    background: #ffffff !important;
+    border: 1px solid var(--bc-border) !important;
+    border-radius: var(--bc-radius) !important;
+    box-shadow: var(--bc-shadow-sm) !important;
+    margin-bottom: 24px !important;
+    overflow: hidden;
+}
+
+fieldset.module h2 {
+    background: linear-gradient(135deg, var(--bc-navy-950) 0%, var(--bc-navy-800) 100%) !important;
+    color: #ffffff !important;
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    padding: 14px 20px !important;
+    border-bottom: 2px solid var(--bc-amber-500) !important;
+    letter-spacing: 0.02em;
+}
+
+/* Filas de formulario */
+.form-row {
+    padding: 14px 20px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: #ffffff !important;
+}
+
+.form-row:last-child {
+    border-bottom: none !important;
+}
+
+/* Etiquetas (Labels) con alto contraste */
+.aligned label,
+.form-row label {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+    font-size: 0.88rem !important;
+    width: 220px !important;
+    min-width: 200px !important;
+    padding-top: 8px;
+    letter-spacing: 0.01em;
+}
+
+.form-row label.required::after {
+    content: " *" !important;
+    color: var(--bc-rose-500) !important;
+    font-weight: 800;
+}
+
+/* Inputs de Texto, Selects, Textareas (Fondo Blanco Limpio y Borde Nítido) */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="url"],
+input[type="number"],
+input[type="tel"],
+input[type="date"],
+input[type="datetime-local"],
+textarea,
+select,
+.vTextField,
+.vIntegerField,
+.vDateField,
+.vTimeField {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    padding: 9px 14px !important;
+    font-size: 0.9rem !important;
+    font-family: inherit !important;
+    line-height: 1.4 !important;
+    width: 100% !important;
+    max-width: 600px !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Estado Focus interactivo */
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus,
+input[type="datetime-local"]:focus,
+textarea:focus,
+select:focus,
+.vTextField:focus {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: var(--bc-blue-500) !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+    outline: none !important;
+}
+
+/* Selectores */
+select {
+    cursor: pointer;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+}
+
+select option {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+}
+
+/* Checkboxes */
+input[type="checkbox"] {
+    width: 18px !important;
+    height: 18px !important;
+    accent-color: var(--bc-blue-600) !important;
+    cursor: pointer;
+    margin-top: 4px;
+}
+
+/* Textareas */
+textarea, .vLargeTextField {
+    min-height: 100px !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+}
+
+/* Textos de ayuda (Help Text) */
+.help, .help-tooltip {
+    font-size: 0.8rem !important;
+    color: var(--bc-navy-600) !important;
+    margin-top: 6px !important;
+    display: block;
+}
+
+/* Barra Inferior de Guardado (Submit Row) */
+.submit-row {
+    background: #ffffff !important;
+    border: 1px solid var(--bc-border) !important;
+    border-radius: var(--bc-radius) !important;
+    padding: 16px 24px !important;
+    margin-top: 20px !important;
+    box-shadow: var(--bc-shadow-md) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+}
+
+.submit-row input[type="submit"] {
+    margin: 0 !important;
+    font-size: 0.88rem !important;
+    padding: 10px 22px !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+}
+
+.submit-row input.default {
+    background: var(--bc-emerald-500) !important;
+    color: #ffffff !important;
+}
+.submit-row input.default:hover {
+    background: var(--bc-emerald-600) !important;
+}
+
+/* Barra Lateral de Modelos (Nav Sidebar) */
+#nav-sidebar {
+    background: #0f172a !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+#nav-sidebar .module th {
+    background: #1e293b !important;
+    color: #cbd5e1 !important;
+}
+
+#nav-sidebar .module caption,
+#nav-sidebar h2 {
+    background: linear-gradient(135deg, var(--bc-navy-950) 0%, var(--bc-navy-900) 100%) !important;
+    color: #ffffff !important;
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+    padding: 10px 14px !important;
+    border-bottom: 1px solid rgba(245, 158, 11, 0.4) !important;
+}
+
+#nav-sidebar a {
+    color: #cbd5e1 !important;
+    font-size: 0.84rem !important;
+    font-weight: 500;
+}
+
+#nav-sidebar a:hover {
+    color: var(--bc-amber-500) !important;
+}
+
+#nav-sidebar .current-model {
+    background: rgba(245, 158, 11, 0.15) !important;
+}
+#nav-sidebar .current-model a {
+    color: var(--bc-amber-500) !important;
+    font-weight: 700 !important;
+}
+
+/* Búsqueda rápida en Nav Sidebar */
+#nav-filter {
+    background: #1e293b !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 6px !important;
+    color: #ffffff !important;
+    padding: 6px 10px !important;
+    font-size: 0.84rem !important;
+}
