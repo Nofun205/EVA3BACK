@@ -22,3 +22,7 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+# Vistas de Error Personalizadas
+handler404 = 'gestion.views.custom_404_view'
+handler500 = 'gestion.views.custom_500_view'

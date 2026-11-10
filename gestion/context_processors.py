@@ -4,7 +4,7 @@ from django.utils import timezone
 
 def alertas_globales(request):
     """Context processor que provee contadores en tiempo real para la barra de navegación y el dashboard."""
-    if not request.user.is_authenticated:
+    if not hasattr(request, 'user') or not request.user.is_authenticated:
         return {}
 
     try:

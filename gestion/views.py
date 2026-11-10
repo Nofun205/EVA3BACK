@@ -697,3 +697,13 @@ def alquiler_comprobante(request, pk):
         'detalles': detalles
     })
 
+
+
+def custom_404_view(request, exception=None):
+    """Vista personalizada para páginas no encontradas (404)."""
+    return render(request, '404.html', status=404)
+
+
+def custom_500_view(request):
+    """Vista personalizada para errores internos del servidor (500)."""
+    return render(request, '500.html', status=500)
