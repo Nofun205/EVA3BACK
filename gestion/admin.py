@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils import timezone
 from django.http import HttpResponse
 import csv
@@ -115,8 +116,8 @@ class HerramientaAdmin(admin.ModelAdmin):
 
     def mantenimiento_status(self, obj):
         if obj.requiere_mantenimiento_preventivo:
-            return format_html('<span style="color: #ef4444; font-weight: 800; background: #fee2e2; padding: 3px 8px; border-radius: 12px; font-size: 11px;">⚠️ Requiere Mantención</span>')
-        return format_html('<span style="color: #10b981; font-weight: 700; font-size: 11px;"><i class="fa-solid fa-check"></i> Al Día</span>')
+            return mark_safe('<span style="color: #ef4444; font-weight: 800; background: #fee2e2; padding: 3px 8px; border-radius: 12px; font-size: 11px;">⚠️ Requiere Mantención</span>')
+        return mark_safe('<span style="color: #10b981; font-weight: 700; font-size: 11px;"><i class="fa-solid fa-check"></i> Al Día</span>')
     mantenimiento_status.short_description = "Alerta Mantención"
 
     @admin.action(description="🛠️ Marcar herramientas seleccionadas en Mantenimiento")
@@ -159,10 +160,10 @@ class ContratistaAdmin(admin.ModelAdmin):
 
     def estado_bloqueo_badge(self, obj):
         if obj.bloqueado:
-            return format_html(
+            return mark_safe(
                 '<span style="background-color: #ef4444; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 11px;">⛔ BLOQUEADO</span>'
             )
-        return format_html(
+        return mark_safe(
             '<span style="background-color: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 11px;">✔ HABILITADO</span>'
         )
     estado_bloqueo_badge.short_description = "Estado Comercial"
@@ -334,14 +335,14 @@ class AlertaMorosidadAdmin(admin.ModelAdmin):
 
     def bloqueo_badge(self, obj):
         if obj.bloqueo_aplicado:
-            return format_html('<span style="color: #ef4444; font-weight: 800;">⛔ Sancionado</span>')
+            return mark_safe('<span style="color: #ef4444; font-weight: 800;">⛔ Sancionado</span>')
         return "No"
     bloqueo_badge.short_description = "Bloqueo"
 
     def estado_alerta_badge(self, obj):
         if obj.resuelta:
-            return format_html('<span style="background-color: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 11px;">RESUELTA</span>')
-        return format_html('<span style="background-color: #ef4444; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 11px;">PENDIENTE</span>')
+            return mark_safe('<span style="background-color: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 11px;">RESUELTA</span>')
+        return mark_safe('<span style="background-color: #ef4444; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 11px;">PENDIENTE</span>')
     estado_alerta_badge.short_description = "Estado"
 
     @admin.action(description="✔ Regularizar y resolver alertas seleccionadas (desbloquea contratistas)")

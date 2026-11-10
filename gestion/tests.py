@@ -175,3 +175,25 @@ class BuildCorpCoreTests(TestCase):
 
         res_contratistas = self.client.get('/api/contratistas/')
         self.assertEqual(res_contratistas.status_code, 200)
+
+    def test_admin_vistas_responden_200(self):
+        """Verifica que el panel de Django Admin y sus formularios respondan 200."""
+        self.user.is_superuser = True
+        self.user.save()
+        admin_rutas = [
+            '/admin/',
+            '/admin/gestion/herramienta/',
+            '/admin/gestion/herramienta/add/',
+            '/admin/gestion/contratista/',
+            '/admin/gestion/contratista/add/',
+            '/admin/gestion/obra/',
+            '/admin/gestion/obra/add/',
+            '/admin/gestion/alquilerprestamo/',
+            '/admin/gestion/alquilerprestamo/add/',
+            '/admin/gestion/mantenimiento/',
+            '/admin/gestion/alertamorosidad/',
+        ]
+        for ruta in admin_rutas:
+            res = self.client.get(ruta)
+            self.assertEqual(res.status_code, 200, f"Falla en admin ruta {ruta}")
+
