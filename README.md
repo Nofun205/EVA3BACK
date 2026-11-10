@@ -11,13 +11,13 @@
 ## 🌐 Enlace de Despliegue en AWS Cloud (EC2)
 
 > ### **URL Pública de la Aplicación en AWS EC2:**
-> 🔗 **`http://98.89.32.199/`**
+> 🔗 **`http://54.80.92.55/`**
 >
 > **Panel Django Admin:**
-> 🔗 **`http://98.89.32.199/admin/`**
+> 🔗 **`http://54.80.92.55/admin/`**
 >
 > **API REST Navegable (DRF):**
-> 🔗 **`http://98.89.32.199/api/`**
+> 🔗 **`http://54.80.92.55/api/`**
 
 ### 🔑 Credenciales de Acceso para Evaluación y Defensa:
 * **Superusuario / Administrador:**
@@ -131,7 +131,7 @@ Abrir el navegador web en: `http://localhost:8000/`
 ### Paso 2: Conexión SSH y Despliegue Automatizado
 Conéctese mediante su terminal a la instancia EC2:
 ```bash
-ssh -i "su-llave.pem" ubuntu@98.89.32.199
+ssh -i "su-llave.pem" ubuntu@54.80.92.55
 ```
 
 Una vez dentro de la máquina virtual Ubuntu, ejecute:
@@ -185,7 +185,7 @@ La aplicación expone una API REST moderna para integración con frontend móvil
 Durante la evaluación práctica en vivo con el docente **Marcelo Alvarado Aravena**, siga esta secuencia estructurada para demostrar dominio total:
 
 ### 1. Demostración en la IP Pública de AWS EC2:
-* Ingrese a `http://98.89.32.199/` desde el navegador.
+* Ingrese a `http://54.80.92.55/` desde el navegador.
 * Inicie sesión con el superusuario `admin` / `Admin123!`.
 * **Dashboard:** Muestre las métricas en tiempo real (herramientas disponibles, en uso, contratistas bloqueados y alertas activas).
 
@@ -214,6 +214,6 @@ Durante la evaluación práctica en vivo con el docente **Marcelo Alvarado Arave
 * Regularice la alerta y compruebe cómo se desbloquea al contratista.
 
 ### 6. Demostración en Django Admin:
-* Acceda a `http://98.89.32.199/admin/`.
+* Acceda a `http://54.80.92.55/admin/`.
 * Muestre la personalización visual con badges de colores para cada estado (`DISPONIBLE`, `EN_USO`, `MANTENIMIENTO`, `BLOQUEADO`), los filtros laterales, búsquedas y las acciones masivas personalizadas (`@admin.action`).
 
