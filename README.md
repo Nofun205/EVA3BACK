@@ -178,42 +178,4 @@ La aplicación expone una API REST moderna para integración con frontend móvil
 | `POST` | `/api/mantenimientos/{id}/completar/` | Finaliza mantención y reprograma próximo ciclo. |
 | `GET / POST` | `/api/alertas/` | Alertas de morosidad y sanciones activas. |
 
----
-
-## 🎓 7. Guía de Defensa Práctica ante el Docente
-
-Durante la evaluación práctica en vivo con el docente **Marcelo Alvarado Aravena**, siga esta secuencia estructurada para demostrar dominio total:
-
-### 1. Demostración en la IP Pública de AWS EC2:
-* Ingrese a `http://54.80.92.55/` desde el navegador.
-* Inicie sesión con el superusuario `admin` / `Admin123!`.
-* **Dashboard:** Muestre las métricas en tiempo real (herramientas disponibles, en uso, contratistas bloqueados y alertas activas).
-
-### 2. Flujo del Requerimiento 1 (Catálogo y Trazabilidad):
-* Vaya a **Herramientas**. Ingrese al detalle de una herramienta (ej: `GEN-001` o `COM-003`).
-* Muestre la pestaña **"Trazabilidad de Estados (Auditoría)"** donde se observa el historial inmutable de cada cambio de estado, el usuario responsable y el motivo.
-* Cambie el estado mediante el botón "Cambiar Estado" y verifique cómo se inserta la nueva fila de auditoría.
-
-### 3. Flujo del Requerimiento 2 (Entrega y Devolución con Firma Digital):
-* Vaya a **Alquileres** y abra un contrato solicitado (o cree uno nuevo en "+ Nuevo Alquiler").
-* Presione **"Despachar y Firmar Entrega"**.
-* Dibuje la firma con el mouse/touch en el recuadro Canvas interactivo. Confirme la entrega y muestre cómo el estado del contrato pasa a `ACTIVO`, las herramientas pasan a `EN_USO` y la firma queda almacenada como imagen PNG.
-* Presione **"Recibir y Firmar Devolución"**.
-* Ingrese el horómetro final, el estado físico y estampe la firma digital de conformidad. Al finalizar, muestre la liquidación de costo y la reactivación de herramientas.
-
-### 4. Flujo del Requerimiento 3 (Mantenimientos Preventivos):
-* Muestre en la sección **Mantenimiento** la alerta amarilla de herramientas que superaron su umbral de horas de uso (ej: `COM-003`).
-* Presione "Programar Ahora" y complete el formulario.
-* Muestre cómo la herramienta pasa automáticamente a estado `MANTENIMIENTO`.
-* Finalice el servicio con el botón "Finalizar", ingrese los repuestos y demuestre cómo el equipo vuelve a quedar `DISPONIBLE` y con su próximo mantenimiento reprogramado a 90 días.
-
-### 5. Flujo del Requerimiento 4 (Morosidad y Bloqueo Automático):
-* Presione en la barra superior el botón **"Chequear Morosidad"** (o en la sección Alertas).
-* El sistema identificará el contrato `ALQ-2026-0001` vencido, calculará los días de retraso, la multa y **bloqueará inmediatamente al contratista** `Subcontratos e Ingeniería Titan Ltda`.
-* Intente crear un nuevo alquiler para este contratista: demuestre que el sistema rechaza la operación informando que el contratista se encuentra bloqueado.
-* Regularice la alerta y compruebe cómo se desbloquea al contratista.
-
-### 6. Demostración en Django Admin:
-* Acceda a `http://54.80.92.55/admin/`.
-* Muestre la personalización visual con badges de colores para cada estado (`DISPONIBLE`, `EN_USO`, `MANTENIMIENTO`, `BLOQUEADO`), los filtros laterales, búsquedas y las acciones masivas personalizadas (`@admin.action`).
 
